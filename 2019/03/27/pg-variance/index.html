@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="总结两篇ICLR上的硬核文章，内容都与policy gradient系列方法的variance estimation有关，一篇来自Pieter Abbeel组，2018年3月起挂在ArXiv上；另一篇出自腾讯AILab，发表于ICLR-2019（仰望大佬">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Two Papers about the Variance of Policy Gradient on ICLR-2019">
+<meta property="og:url" content="http://yoursite.com/2019/03/27/pg-variance/index.html">
+<meta property="og:site_name" content="Chen Shawn&#39;s Blogs">
+<meta property="og:description" content="总结两篇ICLR上的硬核文章，内容都与policy gradient系列方法的variance estimation有关，一篇来自Pieter Abbeel组，2018年3月起挂在ArXiv上；另一篇出自腾讯AILab，发表于ICLR-2019（仰望大佬">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2019/03/27/pg-variance/optimal-baseline.png">
+<meta property="og:image" content="http://yoursite.com/2019/03/27/pg-variance/action-dep.png">
+<meta property="og:image" content="http://yoursite.com/2019/03/27/pg-variance/improve.png">
+<meta property="og:image" content="http://yoursite.com/2019/03/27/pg-variance/angular.png">
+<meta property="og:image" content="http://yoursite.com/2019/03/27/pg-variance/trpo.png">
+<meta property="og:image" content="http://yoursite.com/2019/03/27/pg-variance/theorem-46.png">
+<meta property="og:image" content="http://yoursite.com/2019/03/27/pg-variance/def44.png">
+<meta property="og:image" content="http://yoursite.com/2019/03/27/pg-variance/fisher-decomposition.png">
+<meta property="article:published_time" content="2019-03-27T10:57:54.000Z">
+<meta property="article:modified_time" content="2020-04-18T07:53:35.594Z">
+<meta property="article:author" content="Chen Shawn">
+<meta property="article:tag" content="Paper reading">
+<meta property="article:tag" content="Research">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2019/03/27/pg-variance/optimal-baseline.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/03/27/pg-variance/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Two Papers about the Variance of Policy Gradient on ICLR-2019 | Chen Shawn's Blogs</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Chen Shawn's Blogs</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">╭(●｀∀´●)╯ ╰(●’◡’●)╮</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>Schedule</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ChenShawn" class="github-corner" title="Read some fucking stupid codes here..." aria-label="Read some fucking stupid codes here..." rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/27/pg-variance/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Chen Shawn">
+      <meta itemprop="description" content="Daily life of eating, sleeping, and messing around">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chen Shawn's Blogs">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Two Papers about the Variance of Policy Gradient on ICLR-2019
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-03-27 18:57:54" itemprop="dateCreated datePublished" datetime="2019-03-27T18:57:54+08:00">2019-03-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-04-18 15:53:35" itemprop="dateModified" datetime="2020-04-18T15:53:35+08:00">2020-04-18</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><em>总结两篇ICLR上的硬核文章，内容都与policy gradient系列方法的variance estimation有关，一篇来自Pieter Abbeel组，2018年3月起挂在ArXiv上；另一篇出自腾讯AILab，发表于ICLR-2019（<del>仰望大佬</del></em></p>
+<a id="more"></a>
+<h2 id="Variance-Reduction-for-Policy-Gradient-with-Action-Dependent-Factorized-Baselines"><a href="#Variance-Reduction-for-Policy-Gradient-with-Action-Dependent-Factorized-Baselines" class="headerlink" title="Variance Reduction for Policy Gradient with Action-Dependent Factorized Baselines"></a>Variance Reduction for Policy Gradient with Action-Dependent Factorized Baselines</h2><p>文章研究的问题还是比较general的：当action可以按维度分成几个相互独立的factor的时候，作者提出可以通过引入与action相关的baseline来降低policy gradient的方差</p>
+<blockquote>
+<p>The key insight of this paper is that when the individual actions produced by the policy can be decomposed into multiple factors, we can incorporate this additional information into the baseline to further reduce variance.</p>
+</blockquote>
+<h3 id="Preliminaries"><a href="#Preliminaries" class="headerlink" title="Preliminaries"></a>Preliminaries</h3><p><em>解释几个关键的名词</em></p>
+<h4 id="1-Baseline"><a href="#1-Baseline" class="headerlink" title="1. Baseline"></a>1. Baseline</h4><p>众所周知policy gradient的一般形式为</p>
+<script type="math/tex; mode=display">\nabla_{\theta}J(\pi_{\theta})=\mathbb{E}_{\pi_{\theta}}[Q(s_{t},a_{t})\nabla_{\theta}\log{\pi_{\theta}(a_{t}|s_{t})}]</script><p>其中</p>
+<script type="math/tex; mode=display">\mathbb{E}_{\pi_{\theta}}[Q(s_{t},a_{t})]=\mathbb{E}_{\pi_{\theta}}[\sum_{t=0}^{T}\gamma^{t}R(s_{t},a_{t})]</script><p>这就是最原始的REINFORCE形式，但REINFORCE梯度估计具有很高的方差，一种解决方案是在不影响原本梯度方向的前提下加一个<strong>只取决于state</strong>的baseline function</p>
+<script type="math/tex; mode=display">\nabla_{\theta}J(\pi_{\theta})=\mathbb{E}_{\pi_{\theta}}[(Q(s_{t},a_{t})-b(s_{t}))\nabla_{\theta}\log{\pi_{\theta}(a_{t}|s_{t})}]</script><h4 id="2-Bias-free-for-baseline-functions"><a href="#2-Bias-free-for-baseline-functions" class="headerlink" title="2. Bias-free for baseline functions"></a>2. Bias-free for baseline functions</h4><p>当baseline只取决于state时，baseline无条件满足bias-free条件</p>
+<script type="math/tex; mode=display">\mathbb{E}_{\pi_{\theta}}[b(s_{t})\nabla_{\theta}\log{\pi_{\theta}(a_{t}|s_{t})}]=0</script><p>本文中作者之所以反复提到bias-free，是因为文章最主要的改进是将$b(s_{t})$改成了$b(s_{t},a_{t}^{-i})$，即标题所说的action-dependent baseline</p>
+<h4 id="3-Baselines-with-minimum-variance"><a href="#3-Baselines-with-minimum-variance" class="headerlink" title="3. Baselines with minimum variance"></a>3. Baselines with minimum variance</h4><p>什么样的$b(s_{t})$可以带来最小的方差？</p>
+<p><img src="./optimal-baseline.png" width="95%"></p>
+<p>一个简单的凸二次优化，最终的结果中，分母上就是FIM的trace，分子上是一个带有Q-function rescale的FIM trace</p>
+<p>实际编程的时候，由于这个最优baseline的计算量太大，所以大多情况下人们采用备选方案——通过supervised training得到一个value function $v(s_{t})$ —— 这种方法被广泛应用在各种policy gradient变体算法中</p>
+<h3 id="Action-Dependent-Baselines"><a href="#Action-Dependent-Baselines" class="headerlink" title="Action-Dependent Baselines"></a>Action-Dependent Baselines</h3><h4 id="Assumption"><a href="#Assumption" class="headerlink" title="Assumption"></a>Assumption</h4><p>Action $a_{t}$ 可以分解成几个互相不关联的factors $a_{t}^{i},a_{t}^{j},…$，不同的factors之间满足</p>
+<script type="math/tex; mode=display">\nabla_{\theta}\log\pi_{\theta}(a_{t}^{i}|s_{t})^{T}\nabla_{\theta}\log\pi_{\theta}(a_{t}^{j}|s_{t}),\ \forall{i\neq{j}}</script><p>仔细想想这个假设应该还是比较强的，因为作者并不是在假设不同的action factors是条件独立的，而是假设不同action factors对于参数的梯度永远是正交的。作者举出了几个满足该假设的例子</p>
+<ul>
+<li>Multi-agent任务中不同的policy之间条件独立 =&gt; 不同policy之间条件独立等价于policy对于参数的梯度正交吗？</li>
+<li>Partially-observable环境下，当每个agent观测到的state完全没有交集 =&gt; 同上</li>
+<li>对不同的action factors采用不同的function approximators，且这些function approximators完全不存在参数共享 =&gt; 参数不共享说明参数不在一个空间里，不在同一个空间能做内积吗？</li>
+</ul>
+<h4 id="Optimal-baselines"><a href="#Optimal-baselines" class="headerlink" title="Optimal baselines"></a>Optimal baselines</h4><p>这里的推导用到了上面的假设，除此以外推导过程与上面的凸二次优化类似，得到结果</p>
+<p><img src="./action-dep.png" width="95%"></p>
+<p>满足假设条件时，定量描述，采用action-dependent baseline比原始的state-dependent baseline方差小多少？</p>
+<p><img src="./improve.png" width="95%"></p>
+<p>作者文中称当Q-function相对action维度很不平滑时，这个improvement会很大</p>
+<p>个人觉得这个形式太复杂，意义不是很大，于是自己沿着这个结果推了个更加没什么卵用的upper bound（<del>如果是lower bound就好了</del></p>
+<script type="math/tex; mode=display">I_{b^{*}(s)}\leq\sum_{i}\mathbb{E}_{\rho_{\pi},a_{t}^{-i}}[\frac{\sum_{j\neq{i}}Y_{j}}{\sum_{j\neq{i}}Z_{j}}]</script><h4 id="Marginalized-Q-baseline"><a href="#Marginalized-Q-baseline" class="headerlink" title="Marginalized Q baseline"></a>Marginalized Q baseline</h4><p>依然难算的baseline，作者在这一节里考虑如何将这个baseline用在实际算法中，提出两种方案</p>
+<ul>
+<li>Monte-Carlo marginalized baseline: 用Monte-Carlo算积分积掉action $a_{i}$，这个idea在我最早了解到multi-agent的时候就想到过，当时是从PGM的角度去想，觉得把其他agent的action积分掉是再正常不过的做法，应该早就有人做过</li>
+<li>Mean marginalized Q baseline: 这个idea就值得玩味了，这里作者直接用$b(s_{t},a_{t}^{-i})=Q_{\pi}(s_{t},a_{t}^{-i},\mathbb{E}_{\pi}[a_{t}^{i}])$来加快计算速度。假设这个Q-function学的非常理想，且policy $\pi$的输出是一个高斯分布，那么取$a_{t}^{i}$的均值点，baseline的形势会变成$b_{i}=\max_{a_{j}\in{\mathcal{A}^{-i}}}Q_{\pi}(s_{t},a_{t}^{-i},a_{j})$，和Monte-Carlo完全不是一码事</li>
+</ul>
+<p>实际上按照作者在实验部分的说法，两者的效果很接近，后者要比前者稍高一点点，这让我有点费解</p>
+<h2 id="Marginal-Policy-Gradients-A-Unified-Family-of-Estimators-for-Bounded-Action-Spaces-with-Applications"><a href="#Marginal-Policy-Gradients-A-Unified-Family-of-Estimators-for-Bounded-Action-Spaces-with-Applications" class="headerlink" title="Marginal Policy Gradients: A Unified Family of Estimators for Bounded Action Spaces with Applications"></a>Marginal Policy Gradients: A Unified Family of Estimators for Bounded Action Spaces with Applications</h2><p>又是来自Tencent AILab大佬Han Liu组的paper，文章的理论部分写的非常严谨，用到了大量的测度论知识，给人一种Princeton数学科班生对我等数学渣降维打击的感觉。由于文章本身就已经不是很易懂了，这里尽可能从intuition的角度出发解释下个人对文章的理解，想要更严谨还是去读原文吧</p>
+<p>这篇文章研究的是policy gradient方法的一个细节问题：典型的policy gradient算法，包括TRPO和PPO在内，常常将policy network $\pi(a|s)$参数化成一个高斯分布的形式，然后从$\pi(a|s)$中采样得到实际与环境交互的action。问题在于，很多环境的action space是定义在一个特定的区间内的（譬如Pendulum-v0中action space是[-2,2]），从高斯分布中采样可能会导致action不在这个区间内，这时常见的做法是</p>
+<ul>
+<li>允许环境去裁剪action（打开OpenAI gym的源码他们就是这样做的） =&gt; 作者声称，这样的做法会带来不必要的高方差</li>
+<li>Clip the action and update according to the clipped action =&gt; 这种做法是off-policy的</li>
+</ul>
+<p>作者举得另一个例子是在RTS游戏或机器人导航任务中，action space常常指的是英雄或机器人移动的方向，这个方向的值是连续的，不是像Atari那样的上下左右四个离散动作，这时如果我们还是用老办法让$\pi(a|s)$输出$\mathcal{N}(\mu,\Sigma | \mu\in{(0,2\pi)})$然后做clipping，由于角度的空间不是$\mathbb{R}^{2}$，i.e. $\epsilon=2\pi+\epsilon$，那么对于$\pi(a|s)$的概率分布$\mathcal{N}({\mu,\Sigma})$而言，$\mathbb{P}(\mu-\epsilon)\neq{}\mathbb{P}(\mu+\epsilon),\forall{\mu\neq{\pi}}$，针对这个问题有两种解决思路</p>
+<ul>
+<li>与上面的思路类似，允许环境对action<strong>重新参数化</strong>：采样$a\sim\mathcal{N}(\mu,\Sigma)$，其中$\mu\in{\mathbb{R}^{2}}$，与环境交互的时候执行$a/||a||$ =&gt; 这个方法可以推广到$\mathbb{R}^{d}$高维空间中，问题在于，我们训练的policy有$d$个自由度，而环境实际执行的动作只有$d-1$的自由度，可以想到这个方法的方差一定很高，收敛也会比较慢</li>
+<li>作者在Section 3中提出的新方法，叫做<strong>Angular Policy Gradient</strong>，思路也比较直观，就是用坐标变换把$\mathbb{R}^{d}$空间中由$a/||a||$所确定的density直接映射到spherical measure $\mathcal{S}^{d-1}$上去，作者将$\mathcal{S}^{d-1}$空间中的这个density称为<strong>Angular Gaussian distribution</strong></li>
+</ul>
+<h3 id="Angular-Policy-Gradient"><a href="#Angular-Policy-Gradient" class="headerlink" title="Angular Policy Gradient"></a>Angular Policy Gradient</h3><p><img src="./angular.png" width="95%"></p>
+<p>这个让人看着头大的式子里，最让人头大的莫过于这个$\mathcal{M}_{d-1}(\alpha)$了，这货是一个没有closed form的积分，所幸它的数学性质还不错，用分部积分可以得到</p>
+<script type="math/tex; mode=display">d\mathcal{M}_{d-1}(x)=\mathcal{M}_{d+1}(x)-x\mathcal{M}_{d}(x)</script><p>看到这个公式就发现可以用动态规划求解，边界条件为</p>
+<script type="math/tex; mode=display">\mathcal{M}_{1}(x)=xp(x|\mu=0,\sigma=1)+\mathbb{P}(x|\mu=0,\sigma=1),\ \mathcal{M}_{0}=p(x|\mu=0,\sigma=1)</script><p>其中$\mathbb{P}$和$p$分别是$\mathcal{N}(0,1)$的cdf和pdf，这个DP的复杂度为$O(d)$</p>
+<p>实际做的时候对log probability作者采用了与TRPO相同的处理方法</p>
+<p><img src="trpo.png" width="95%"></p>
+<h3 id="Marginal-Policy-Gradient-Estimators"><a href="#Marginal-Policy-Gradient-Estimators" class="headerlink" title="Marginal Policy Gradient Estimators"></a>Marginal Policy Gradient Estimators</h3><p>把上面讨论的两种解决policy输出与action space不同的思路数学抽象一下，设$Q(s_{t},a_{t})=\mathbb{E}_{\pi}[\sum_{i=t}^{\infty}\gamma^{i-t}R(s_{i},a_{i})]$为state-action function，把$\pi$当成一个probability measure，$T_{*}\pi$为在映射$T$下$\pi$的push-forward measure，忽略文章中各种测度相关的假设（这些假设在现实环境下显然是无条件成立的）</p>
+<ul>
+<li>$g_{1}=Q(T(a),s)\nabla\log{f_{\pi}(a|s)}$: 先由环境输出action，与环境交互时经映射T将action映射到环境所要求的action space中去</li>
+<li>$g_{2}=Q(a,s)\nabla\log{f_{T_{*}\pi}(a|s)}$: 直接将policy network的参数化形式经$T$映射到真正的action space中去，然后直接采样与环境交互</li>
+</ul>
+<p>整个Section 4中作者讨论的核心问题是：</p>
+<ul>
+<li>$g_{1}$与$g_{2}$哪个梯度估计的variance更大 =&gt; 结论当然是$Var(g_{1})\geq{Var(g_{2})}$，不然Section 3里面推导了半天的angular policy gradient不就没用了？</li>
+<li>定量分析，两个梯度估计的方差之间差距有多大 =&gt; Theorem 4.6中作者给出的结果是</li>
+</ul>
+<p><img src="./theorem-46.png" width="95%"></p>
+<p>其中$\mathcal{I}(q,\theta)$为Total Scaled Fisher Information：</p>
+<p><img src="./def44.png" width="95%"></p>
+<p>可以想到当$q(a)=1$时这个定义等价于原始形式的Fisher information的trace，众所周知Fisher information是某个概率分布期望下梯度的方差，其实Theorem 4.6中数学期望下Fisher information的形式就是stochastic gradient的方差的trace（加上了在策略分布下随机游走的平稳分布$\rho(s)$积分，数学期望里面的outer product变成了inner product），这个trace之前常常被用来分析SGD的方差，与普通形式的方差拥有相同的性质</p>
+<blockquote>
+<p>The implication of Theorem 4.6 is that if there is some information loss via a function T before the action interacts with the dynamics of the environment, then one obtains a lower variance estimator of the gradient by replacing the density of $π$ with the density of $T_{∗}π$ in the<br>expression for the policy gradient.</p>
+</blockquote>
+<h3 id="Theory-and-Methodology"><a href="#Theory-and-Methodology" class="headerlink" title="Theory and Methodology"></a>Theory and Methodology</h3><h4 id="1-The-law-of-total-variance"><a href="#1-The-law-of-total-variance" class="headerlink" title="1. The law of total variance"></a>1. The law of total variance</h4><p><em>Refer to <a href="https://en.wikipedia.org/wiki/Law_of_total_variance" target="_blank" rel="noopener">Wikipedia</a> for detailed description</em></p>
+<blockquote>
+<p>In probability theory, the law of total variance, or variance decomposition formula, states that if $X$ and $Y$ are random variables on the <strong>same</strong> probability space, and the variance of Y is <strong>finite</strong>, then</p>
+<script type="math/tex; mode=display">Var(Y)=\mathbb{E}[Var(Y|X)]+Var(\mathbb{E}[Y|X])</script><p>In actuarial science, specifically credibility theory, the first component is called the expected value of the process variance (EVPV) and the second is called the variance of the hypothetical means (VHM).</p>
+</blockquote>
+<p>不难证，可以自己证一下练练手</p>
+<h4 id="2-Fisher-information-decomposition"><a href="#2-Fisher-information-decomposition" class="headerlink" title="2. Fisher information decomposition"></a>2. Fisher information decomposition</h4><p>注意以下说的Fisher information指的全部都是total scaled fisher information</p>
+<p>Fisher information既然是log likelihood的一阶导的方差估计，那么Fisher information也显然可以分解</p>
+<p><img src="./fisher-decomposition.png" width="95%"></p>
+<p>有了这个结论，theorem 4.6就比较显然了</p>
+<h4 id="3-Other-details"><a href="#3-Other-details" class="headerlink" title="3. Other details"></a>3. Other details</h4><ul>
+<li>作者一上来就在related work里面说<a href="https://arxiv.org/abs/1802.07564" target="_blank" rel="noopener">Fujita &amp; Maeda在ICML-2018发表的CAPG文章中</a>理论分析部分是错的，实在是大佬气场，三个审稿人居然没有一个对这一点提出质疑（或许审稿人都是直接跳过related work的</li>
+<li>果然实验又是在王者荣耀上做的，非腾讯内部员工根本不可能复现，希望以后去了腾讯可以有机会接触这方面的东西吧，不知道AILab这些文章中用到的方法是否真的有应用在AI平台部设计的AI bot中</li>
+<li>虽然作者声称这是第一个在RL方向上探索action space为方向的工作，我个人感觉这个问题在robotics里应该非常常见，把欧式空间中的高斯分布映射到spherical measure的思路也很直观，如果说做robotics的人都没有在这个方向上探索过，那足以说明robotics领域对于RL持有何等保守的态度</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Chen Shawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="http://yoursite.com/2019/03/27/pg-variance/" title="Two Papers about the Variance of Policy Gradient on ICLR-2019">http://yoursite.com/2019/03/27/pg-variance/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Paper-reading/" rel="tag"># Paper reading</a>
+              <a href="/tags/Research/" rel="tag"># Research</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/03/23/yugoslavia/" rel="prev" title="宇宙よりも遠い場所">
+      <i class="fa fa-chevron-left"></i> 宇宙よりも遠い場所
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/04/01/soft-actor-critic/" rel="next" title="Soft Actor-Critic and MPO">
+      Soft Actor-Critic and MPO <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Variance-Reduction-for-Policy-Gradient-with-Action-Dependent-Factorized-Baselines"><span class="nav-number">1.</span> <span class="nav-text">Variance Reduction for Policy Gradient with Action-Dependent Factorized Baselines</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Preliminaries"><span class="nav-number">1.1.</span> <span class="nav-text">Preliminaries</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Baseline"><span class="nav-number">1.1.1.</span> <span class="nav-text">1. Baseline</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Bias-free-for-baseline-functions"><span class="nav-number">1.1.2.</span> <span class="nav-text">2. Bias-free for baseline functions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Baselines-with-minimum-variance"><span class="nav-number">1.1.3.</span> <span class="nav-text">3. Baselines with minimum variance</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Action-Dependent-Baselines"><span class="nav-number">1.2.</span> <span class="nav-text">Action-Dependent Baselines</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Assumption"><span class="nav-number">1.2.1.</span> <span class="nav-text">Assumption</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Optimal-baselines"><span class="nav-number">1.2.2.</span> <span class="nav-text">Optimal baselines</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Marginalized-Q-baseline"><span class="nav-number">1.2.3.</span> <span class="nav-text">Marginalized Q baseline</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Marginal-Policy-Gradients-A-Unified-Family-of-Estimators-for-Bounded-Action-Spaces-with-Applications"><span class="nav-number">2.</span> <span class="nav-text">Marginal Policy Gradients: A Unified Family of Estimators for Bounded Action Spaces with Applications</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Angular-Policy-Gradient"><span class="nav-number">2.1.</span> <span class="nav-text">Angular Policy Gradient</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Marginal-Policy-Gradient-Estimators"><span class="nav-number">2.2.</span> <span class="nav-text">Marginal Policy Gradient Estimators</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Theory-and-Methodology"><span class="nav-number">2.3.</span> <span class="nav-text">Theory and Methodology</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-The-law-of-total-variance"><span class="nav-number">2.3.1.</span> <span class="nav-text">1. The law of total variance</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Fisher-information-decomposition"><span class="nav-number">2.3.2.</span> <span class="nav-text">2. Fisher information decomposition</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Other-details"><span class="nav-number">2.3.3.</span> <span class="nav-text">3. Other details</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chen Shawn"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Chen Shawn</p>
+  <div class="site-description" itemprop="description">Daily life of eating, sleeping, and messing around</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChenShawn" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChenShawn" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:c.x.zhao@hotmail.com" title="E-Mail → mailto:c.x.zhao@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/yourname" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/yukio-2" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;yukio-2" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Zhihu</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chen Shawn</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.3" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"left","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":1}});</script></body>
+</html>

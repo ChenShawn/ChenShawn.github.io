@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="问题描述">
+<meta property="og:type" content="article">
+<meta property="og:title" content="On the Numerical Instablity of Conjugate Gradient">
+<meta property="og:url" content="http://yoursite.com/2019/02/15/numerical-instability-conjugate-gradient/index.html">
+<meta property="og:site_name" content="Chen Shawn&#39;s Blogs">
+<meta property="og:description" content="问题描述">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-02-15T15:34:26.000Z">
+<meta property="article:modified_time" content="2020-04-18T07:53:35.594Z">
+<meta property="article:author" content="Chen Shawn">
+<meta property="article:tag" content="Machine learning">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/02/15/numerical-instability-conjugate-gradient/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>On the Numerical Instablity of Conjugate Gradient | Chen Shawn's Blogs</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Chen Shawn's Blogs</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">╭(●｀∀´●)╯ ╰(●’◡’●)╮</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>Schedule</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ChenShawn" class="github-corner" title="Read some fucking stupid codes here..." aria-label="Read some fucking stupid codes here..." rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/15/numerical-instability-conjugate-gradient/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Chen Shawn">
+      <meta itemprop="description" content="Daily life of eating, sleeping, and messing around">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chen Shawn's Blogs">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          On the Numerical Instablity of Conjugate Gradient
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-02-15 23:34:26" itemprop="dateCreated datePublished" datetime="2019-02-15T23:34:26+08:00">2019-02-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-04-18 15:53:35" itemprop="dateModified" datetime="2020-04-18T15:53:35+08:00">2020-04-18</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><a id="more"></a>
+<p>在tensorflow计算图中实现的Conjugate gradient算法，一开始迭代数值就变成nan。</p>
+<p>这个问题是在实现natural gradient optimization的时候发现的，代码实现的思路严格参照了<a href="https://en.wikipedia.org/wiki/Conjugate_gradient_method" target="_blank" rel="noopener">Wikipedia上有关conjugate gradient的讲解</a>，由于代码真正运行是在静态的计算图中，运行时也很难debug出到底出问题的是哪一步。</p>
+<p>最后问题解决的办法也非常暴力——在屏幕上打印出所有的变量一一检查，逐层定位问题。经检查，最有可能的两个问题是：</p>
+<ul>
+<li>Conjugate gradient算法实现中可能会出现分母为零的情况</li>
+<li>计算KL divergence时出现浮点数下溢，导致log输出NaN</li>
+</ul>
+<p>理论上来讲这种情况是不会发生的，因为information geometry optimization的核心度量Fisher information matrix一般来讲都是非奇异的。给定$N$个不同的样本，FIM的rank不小于$N\times{\dim(\mathcal{Z})}$，其中$\dim(\mathcal{Z})$为模型输出空间概率分布本身的维度。这也就是说我们只要把batch size给到足够大，FIM不会出现奇异的情况</p>
+<p>但实际代码运行的时候，由于一些数值上的不稳定性，FIM奇异还是有可能会出现</p>
+<h2 id="Code-implementation"><a href="#Code-implementation" class="headerlink" title="Code implementation"></a>Code implementation</h2><h3 id="Conjugate-gradient-in-TensorFlow-static-computational-graph"><a href="#Conjugate-gradient-in-TensorFlow-static-computational-graph" class="headerlink" title="Conjugate gradient in TensorFlow static computational graph"></a>Conjugate gradient in TensorFlow static computational graph</h3><p>Conjugate gradient的实现确实是比较复杂，想要将其写在TensorFlow的静态计算图内部还是比较麻烦，遇到的坑会比用numpy实现多不少，以下先放代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hessian_vector_product</span><span class="params">(x, grad, variable)</span>:</span></span><br><span class="line">    kl_grad_prod = tf.reduce_sum(grad * x)</span><br><span class="line">    <span class="keyword">return</span> tf.stop_gradient(tf.gradients(kl_grad_prod, variable)[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">build_conjugate_gradient</span><span class="params">(x, kl_grad, variable, n_iter=<span class="number">10</span>, func_Ax=hessian_vector_product)</span>:</span></span><br><span class="line">    <span class="string">"""build_conjugate_gradient</span></span><br><span class="line"><span class="string">    :param x: type tf.Tensor, the initial value of x</span></span><br><span class="line"><span class="string">    :param kl_grad: type tf.Tensor, the gradient of the objective</span></span><br><span class="line"><span class="string">    :param variable: type tf.Variable</span></span><br><span class="line"><span class="string">    :return: the converged conjugate gradient vector \tilde&#123;x&#125; = H^&#123;-1&#125;x</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Fixed number of iterations in the inner loop</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    x = tf.stop_gradient(x)</span><br><span class="line">    r = x - func_Ax(x, kl_grad, variable)</span><br><span class="line">    p = tf.stop_gradient(r)</span><br><span class="line">    r_dot_r = tf.reduce_sum(tf.square(r))</span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> range(n_iter):</span><br><span class="line">        Ap = func_Ax(p, kl_grad, variable)</span><br><span class="line">        p_dot_Ap = tf.reduce_sum(p * Ap)</span><br><span class="line">        alpha = r_dot_r / (p_dot_Ap + EPSILON)</span><br><span class="line">        x = x + alpha * p</span><br><span class="line">        r = r - alpha * Ap</span><br><span class="line">        r_dot_r_new = tf.reduce_sum(tf.square(r))</span><br><span class="line">        beta = r_dot_r_new / (r_dot_r + EPSILON)</span><br><span class="line">        r_dot_r = r_dot_r_new</span><br><span class="line">        p = r + beta * p</span><br><span class="line">    <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<p>Ideas worth noting:</p>
+<ul>
+<li>The conjugate gradient does not require direct access to the explicit form of the matrix, only matrix-vector-product is needed. Let $\hat{F}\in{\mathbb{R}^{N\times{N}}}$ be the FIM estimated with a batch of data, and let $v\in{\mathbb{R}^{N}}$ be an arbitrary vector, then $\hat{F}^{-1}v=\nabla_{\theta}(v^{T}\nabla_{\theta}D_{KL}(\pi_{\text{old}}||\pi))$.</li>
+<li>When calculating the matrix-vector-product $\hat{F}^{-1}v$, remember to block the gradient from vector $v$ using <code>tf.stop_gradient</code> in every iteration. Your gradient should <strong>only come from the KL divergence term</strong>.</li>
+<li>There are devision operations for variables <code>alpha</code> and <code>beta</code>. Remember to add a small number (<code>EPSILON</code>) for the denominator in case of NaN output.</li>
+</ul>
+<p>github上也可以找到其他的基于TensorFlow静态计算图的conjugate gradient实现，<a href="https://github.com/steveKapturowski/tensorflow-rl/blob/master/algorithms/trpo_actor_learner.py" target="_blank" rel="noopener">其中一个印象比较深刻的实现方法</a>是将while循环判断也写在了计算图的内部，用<code>tf.while_loop</code>实现，代码如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_conjugate_gradient_ops</span><span class="params">(self, pg_grads, kl_grads, max_iterations=<span class="number">20</span>, residual_tol=<span class="number">1e-10</span>)</span>:</span></span><br><span class="line">    i0 = tf.constant(<span class="number">0</span>, dtype=tf.int32)</span><br><span class="line">    loop_condition = <span class="keyword">lambda</span> i, r, p, x, rdotr: tf.logical_and(</span><br><span class="line">        tf.greater(rdotr, residual_tol), tf.less(i, max_iterations))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">body</span><span class="params">(i, r, p, x, rdotr)</span>:</span></span><br><span class="line">        fvp = utils.ops.flatten_vars(tf.gradients(</span><br><span class="line">            tf.reduce_sum(tf.stop_gradient(p)*kl_grads),</span><br><span class="line">            self.policy_network.params))</span><br><span class="line">        z = fvp + self.cg_damping * p</span><br><span class="line">        alpha = rdotr / (tf.reduce_sum(p*z) + <span class="number">1e-8</span>)</span><br><span class="line">        x += alpha * p</span><br><span class="line">        r -= alpha * z</span><br><span class="line">        new_rdotr = tf.reduce_sum(r*r)</span><br><span class="line">        beta = new_rdotr / (rdotr + <span class="number">1e-8</span>)</span><br><span class="line">        p = r + beta * p</span><br><span class="line">        new_rdotr = tf.Print(new_rdotr, [i, new_rdotr], <span class="string">'Iteration / Residual: '</span>)</span><br><span class="line">        <span class="keyword">return</span> i+<span class="number">1</span>, r, p, x, new_rdotr</span><br><span class="line"></span><br><span class="line">    _, r, p, stepdir, rdotr = tf.while_loop(</span><br><span class="line">        loop_condition,</span><br><span class="line">        body,</span><br><span class="line">        loop_vars=[i0,</span><br><span class="line">                    pg_grads,</span><br><span class="line">                    pg_grads,</span><br><span class="line">                    tf.zeros_like(pg_grads),</span><br><span class="line">                    tf.reduce_sum(pg_grads*pg_grads)])</span><br><span class="line">    fvp = utils.ops.flatten_vars(tf.gradients(</span><br><span class="line">        tf.reduce_sum(tf.stop_gradient(stepdir)*kl_grads),</span><br><span class="line">        self.policy_network.params))</span><br><span class="line">    shs = <span class="number">0.5</span> * tf.reduce_sum(stepdir*fvp)</span><br><span class="line">    lm = tf.sqrt((shs + <span class="number">1e-8</span>) / self.max_kl)</span><br><span class="line">    fullstep = stepdir / lm</span><br><span class="line">    neggdotstepdir = tf.reduce_sum(pg_grads*stepdir) / lm</span><br><span class="line">    <span class="keyword">return</span> fullstep, neggdotstepdir</span><br></pre></td></tr></table></figure>
+<h3 id="Model-definition-and-environment-interaction"><a href="#Model-definition-and-environment-interaction" class="headerlink" title="Model definition and environment interaction"></a>Model definition and environment interaction</h3><p>调了一晚上的bug，根源就在这部分代码中。在<a href="https://github.com/ChenShawn/advanced_policy_gradient_methods/blob/master/debug.ipynb" target="_blank" rel="noopener">jupyter notebook</a>中打印出了所有变量的实际值后，发现一些奇怪的现象：</p>
+<ul>
+<li>问题出在从普通的gradient转成natural gradient的过程中，普通gradient数值没有问题，natural gradient时常数值爆炸，或者直接出现NaN</li>
+<li>搭了一个小网络来测试conjugate gradient实现的正确与否，发现偶尔会出现FIM奇异的情况，推测是numerical instability所致</li>
+<li>进一步的测试中发现，每一步的迭代中并不总是会出现FIM奇异。相对而言较大、且靠近底层的参数不容易出现FIM奇异，参数量较小且靠近输出层的参数容易出现NaN，当时最频繁出现NaN的参数，就是网络最后一层的bias</li>
+</ul>
+<p>猜测这种numerical instability可能是由于KL divergence不稳定导致的，所以干脆把旧的policy网络和新的policy网络写成同一个，设置<code>reuse=True</code>的来共享网络参数，这样KL divergence就会始终为0，毕竟我们需要的只是KL divergence的gradient和Hessian而已。</p>
+<p>后续实验中发现这样写会使得网络迭代更新速度缓慢，且容易收敛到sub-optimal点，有关这个问题之后如有新的发现再来更新这里的内容吧</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">collect_multi_batch</span><span class="params">(env, agent, maxlen, batch_size=<span class="number">64</span>, qsize=<span class="number">5</span>)</span>:</span></span><br><span class="line">    <span class="string">"""collect_multi_batch</span></span><br><span class="line"><span class="string">    See collect_one_trajectory docstring</span></span><br><span class="line"><span class="string">    :return: three lists of batch data (s, a, r)</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    que = []</span><br><span class="line">    s_init = env.reset()</span><br><span class="line">    que.append(s_init[<span class="literal">None</span>, :])</span><br><span class="line">    <span class="keyword">for</span> it <span class="keyword">in</span> range(qsize - <span class="number">1</span>):</span><br><span class="line">        st, r, done, _ = env.step([<span class="number">-0.99</span>])</span><br><span class="line">        que.append(st[<span class="literal">None</span>, :])</span><br><span class="line">    <span class="comment"># Interact with environment</span></span><br><span class="line">    buffer_s, buffer_a, buffer_r = [], [], []</span><br><span class="line">    <span class="keyword">for</span> it <span class="keyword">in</span> range(maxlen):</span><br><span class="line">        s = np.concatenate(que, axis=<span class="number">-1</span>)</span><br><span class="line">        a = agent.choose_action(s)</span><br><span class="line">        buffer_s.append(s)</span><br><span class="line">        s, r, done, _ = env.step(a)</span><br><span class="line">        que.pop(<span class="number">0</span>)</span><br><span class="line">        que.append(s[<span class="literal">None</span>, :])</span><br><span class="line">        buffer_a.append(a[<span class="literal">None</span>, :])</span><br><span class="line">        r = (r + <span class="number">0.3</span>) * <span class="number">2.0</span></span><br><span class="line">        buffer_r.append(r)</span><br><span class="line">        <span class="keyword">if</span> done:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="comment"># Accumulate rewards</span></span><br><span class="line">    discounted = <span class="number">1.0</span></span><br><span class="line">    last_value = model.value_estimate(s)</span><br><span class="line">    discounted_r = []</span><br><span class="line">    <span class="keyword">for</span> it <span class="keyword">in</span> range(len(buffer_r) - <span class="number">2</span>, <span class="number">-1</span>, <span class="number">-1</span>):</span><br><span class="line">        last_value = r + args.gamma * last_value</span><br><span class="line">        discounted_r.append(last_value)</span><br><span class="line">    state_data, action_data, reward_data = [], [], []</span><br><span class="line">    <span class="keyword">for</span> it <span class="keyword">in</span> range(<span class="number">0</span>, maxlen, batch_size):</span><br><span class="line">        <span class="keyword">if</span> it &gt;= len(buffer_s):</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        states_array = np.concatenate(buffer_s[it: it + batch_size], axis=<span class="number">0</span>)</span><br><span class="line">        actions_array = np.concatenate(buffer_a[it: it + batch_size], axis=<span class="number">0</span>)</span><br><span class="line">        rewards_array = np.array(discounted_r[it: it + batch_size], dtype=np.float32)[:, <span class="literal">None</span>]</span><br><span class="line">        <span class="comment"># rewards_array = np.clip(rewards_array, -1.0, 5.0)</span></span><br><span class="line">        state_data.append(states_array)</span><br><span class="line">        action_data.append(actions_array)</span><br><span class="line">        reward_data.append(rewards_array)</span><br><span class="line">    <span class="keyword">return</span> state_data, action_data, reward_data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TNPGModel</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, v_lr, pi_lr, model_dir, delta=<span class="number">1e-3</span>)</span>:</span></span><br><span class="line">        self.state = tf.placeholder(tf.float32, [<span class="literal">None</span>, <span class="number">10</span>], name=<span class="string">'state'</span>)</span><br><span class="line">        self.action = tf.placeholder(tf.float32, [<span class="literal">None</span>, <span class="number">1</span>], name=<span class="string">'action'</span>)</span><br><span class="line">        self.reward = tf.placeholder(tf.float32, [<span class="literal">None</span>, <span class="number">1</span>], name=<span class="string">'reward'</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Advantage function definition</span></span><br><span class="line">        print(<span class="string">' [*] Building advantage function...'</span>)</span><br><span class="line">        kwargs = &#123;<span class="string">'kernel_initializer'</span>: tf.orthogonal_initializer()&#125;</span><br><span class="line">        <span class="keyword">with</span> tf.variable_scope(<span class="string">'value'</span>):</span><br><span class="line">            h1 = tf.layers.dense(self.state, <span class="number">128</span>, activation=tf.nn.relu, name=<span class="string">'h1'</span>, **kwargs)</span><br><span class="line">            self.value = tf.layers.dense(h1, <span class="number">1</span>, activation=<span class="literal">None</span>, name=<span class="string">'value'</span>, **kwargs)</span><br><span class="line">            self.advantage = self.reward - self.value</span><br><span class="line"></span><br><span class="line">            self.v_loss = tf.reduce_mean(tf.square(self.advantage))</span><br><span class="line">        v_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=<span class="string">'value'</span>)</span><br><span class="line">        self.v_train = tf.train.AdamOptimizer(v_lr).minimize(self.v_loss, var_list=v_vars)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Policy function definition</span></span><br><span class="line">        print(<span class="string">' [*] Building policy function...'</span>)</span><br><span class="line">        self.policy, pi_vars = build_gaussian_network(self.state, <span class="number">1</span>, scope=<span class="string">'policy'</span>)</span><br><span class="line">        old_policy, old_vars = build_gaussian_network(self.state, <span class="number">1</span>, scope=<span class="string">'policy'</span>, trainable=<span class="literal">False</span>, reuse=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">with</span> tf.name_scope(<span class="string">'policy_ops'</span>):</span><br><span class="line">            <span class="comment"># self.assign_op = [old.assign(new) for old, new in zip(old_vars, pi_vars)]</span></span><br><span class="line">            self.sample_op = self.policy.sample(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">with</span> tf.name_scope(<span class="string">'surrogate_loss'</span>):</span><br><span class="line">            ratio = self.policy.prob(self.action) / old_policy.prob(self.action)</span><br><span class="line">            surrogate = ratio * self.advantage</span><br><span class="line">            self.pi_loss = -tf.reduce_mean(surrogate)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Convert Adam gradient to natural gradient</span></span><br><span class="line">        print(<span class="string">' [*] Building natural gradient...'</span>)</span><br><span class="line">        <span class="keyword">with</span> tf.variable_scope(<span class="string">'policy_optim'</span>):</span><br><span class="line">            kl = tf.distributions.kl_divergence(old_policy, self.policy)</span><br><span class="line">            optim = tf.train.AdamOptimizer(pi_lr)</span><br><span class="line">            pi_grads_and_vars = optim.compute_gradients(surrogate, var_list=pi_vars)</span><br><span class="line">            pi_grads = [pair[<span class="number">0</span>] <span class="keyword">for</span> pair <span class="keyword">in</span> pi_grads_and_vars]</span><br><span class="line">            kl_grads = tf.gradients(kl, pi_vars)</span><br><span class="line"></span><br><span class="line">            conj_grads = []</span><br><span class="line">            <span class="keyword">for</span> grad, kl_grad, var <span class="keyword">in</span> zip(pi_grads, kl_grads, pi_vars):</span><br><span class="line">                conj = build_conjugate_gradient(grad, kl_grad, var)</span><br><span class="line">                nat_grad = tf.sqrt((<span class="number">2.0</span> * delta) / (tf.reduce_sum(grad * conj) + EPSILON)) * conj</span><br><span class="line">                conj_grads.append((nat_grad, var))</span><br><span class="line">            self.pi_train = optim.apply_gradients(conj_grads)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Summaries definition</span></span><br><span class="line">        print(<span class="string">' [*] Building summaries...'</span>)</span><br><span class="line">        model_variance = tf.reduce_mean(self.policy._scale)</span><br><span class="line">        self.sums = tf.summary.merge([</span><br><span class="line">            tf.summary.scalar(<span class="string">'max_rewards'</span>, tf.reduce_max(self.reward)),</span><br><span class="line">            tf.summary.scalar(<span class="string">'mean_advantage'</span>, tf.reduce_mean(self.advantage)),</span><br><span class="line">            tf.summary.scalar(<span class="string">'pi_loss'</span>, self.pi_loss),</span><br><span class="line">            tf.summary.scalar(<span class="string">'v_loss'</span>, self.v_loss),</span><br><span class="line">            tf.summary.scalar(<span class="string">'model_variance'</span>, model_variance)</span><br><span class="line">        ], name=<span class="string">'summaries'</span>)</span><br><span class="line"></span><br><span class="line">        config = tf.ConfigProto()</span><br><span class="line">        <span class="comment"># config.gpu_options.allow_growth = True</span></span><br><span class="line">        self.sess = tf.Session(config=config)</span><br><span class="line">        self.sess.run(tf.global_variables_initializer())</span><br><span class="line">        print(<span class="string">' [*] Model built finished'</span>)</span><br><span class="line">        _, self.counter = load(self.sess, model_dir)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">choose_action</span><span class="params">(self, s)</span>:</span></span><br><span class="line">        a = self.sess.run(self.sample_op, feed_dict=&#123;self.state: s&#125;)</span><br><span class="line">        <span class="keyword">return</span> a[<span class="number">0</span>, :, <span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">update</span><span class="params">(self, s, a, r, v_iter, pi_iter, writer=None, counter=<span class="number">0</span>)</span>:</span></span><br><span class="line">        feed_dict = &#123;self.state: s, self.action: a, self.reward: r&#125;</span><br><span class="line">        <span class="comment"># self.sess.run(self.assign_op)</span></span><br><span class="line">        <span class="comment"># update policy</span></span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> range(pi_iter):</span><br><span class="line">            self.sess.run(self.pi_train, feed_dict=feed_dict)</span><br><span class="line">        <span class="comment"># update value function</span></span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> range(v_iter):</span><br><span class="line">            self.sess.run(self.v_train, feed_dict=feed_dict)</span><br><span class="line">        <span class="keyword">if</span> writer <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            sumstr = self.sess.run(self.sums, feed_dict=feed_dict)</span><br><span class="line">            writer.add_summary(sumstr, counter)</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Chen Shawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="http://yoursite.com/2019/02/15/numerical-instability-conjugate-gradient/" title="On the Numerical Instablity of Conjugate Gradient">http://yoursite.com/2019/02/15/numerical-instability-conjugate-gradient/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-learning/" rel="tag"># Machine learning</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/02/12/rl-resources-collection/" rel="prev" title="RL Resources Collection">
+      <i class="fa fa-chevron-left"></i> RL Resources Collection
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/02/26/multiprocessing-and-threading/" rel="next" title="multiprocessing与threading模块相关踩坑记录">
+      multiprocessing与threading模块相关踩坑记录 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题描述"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Code-implementation"><span class="nav-number">2.</span> <span class="nav-text">Code implementation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Conjugate-gradient-in-TensorFlow-static-computational-graph"><span class="nav-number">2.1.</span> <span class="nav-text">Conjugate gradient in TensorFlow static computational graph</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Model-definition-and-environment-interaction"><span class="nav-number">2.2.</span> <span class="nav-text">Model definition and environment interaction</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chen Shawn"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Chen Shawn</p>
+  <div class="site-description" itemprop="description">Daily life of eating, sleeping, and messing around</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChenShawn" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChenShawn" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:c.x.zhao@hotmail.com" title="E-Mail → mailto:c.x.zhao@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/yourname" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/yukio-2" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;yukio-2" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Zhihu</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chen Shawn</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.3" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"left","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":1}});</script></body>
+</html>

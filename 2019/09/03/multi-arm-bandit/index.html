@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="搬运一些国外讲bandit比较好的博客文章 Note: 与原文相比，数学符号定义会做一些小的修改，使其与RL设定通用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Notes for Multi-Arm Bandit Problems">
+<meta property="og:url" content="http://yoursite.com/2019/09/03/multi-arm-bandit/index.html">
+<meta property="og:site_name" content="Chen Shawn&#39;s Blogs">
+<meta property="og:description" content="搬运一些国外讲bandit比较好的博客文章 Note: 与原文相比，数学符号定义会做一些小的修改，使其与RL设定通用">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2019/09/03/multi-arm-bandit/bandit1.png">
+<meta property="article:published_time" content="2019-09-03T07:06:12.000Z">
+<meta property="article:modified_time" content="2020-04-18T07:53:35.590Z">
+<meta property="article:author" content="Chen Shawn">
+<meta property="article:tag" content="Paper reading">
+<meta property="article:tag" content="Research">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2019/09/03/multi-arm-bandit/bandit1.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/09/03/multi-arm-bandit/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Notes for Multi-Arm Bandit Problems | Chen Shawn's Blogs</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Chen Shawn's Blogs</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">╭(●｀∀´●)╯ ╰(●’◡’●)╮</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>Schedule</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ChenShawn" class="github-corner" title="Read some fucking stupid codes here..." aria-label="Read some fucking stupid codes here..." rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/03/multi-arm-bandit/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Chen Shawn">
+      <meta itemprop="description" content="Daily life of eating, sleeping, and messing around">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chen Shawn's Blogs">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Notes for Multi-Arm Bandit Problems
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-09-03 15:06:12" itemprop="dateCreated datePublished" datetime="2019-09-03T15:06:12+08:00">2019-09-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-04-18 15:53:35" itemprop="dateModified" datetime="2020-04-18T15:53:35+08:00">2020-04-18</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>搬运一些国外讲bandit比较好的博客文章</p>
+<p><em>Note: 与原文相比，数学符号定义会做一些小的修改，使其与RL设定通用</em></p>
+<a id="more"></a>
+<p>bandit类问题可以大致分为三类：</p>
+<ul>
+<li>stochastic：每台老虎机吐钱的概率固定，要找到得到reward最大的那台机器</li>
+<li>adversarial：想象你在和赌场老板玩bandit游戏，赌场老板会在每一轮中调整每台老虎机吐钱的概率，使得你的尽可能少拿钱</li>
+<li>Markovian：每台老虎机吐钱的概率模型是Markovian的</li>
+</ul>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a><em>References</em></h2><ul>
+<li><a href="https://www.chrisstucchio.com/blog/2014/adversarial_bandit_is_not_statistics_problem.html" target="_blank" rel="noopener">The Adversarial Bandit is not a Statistics Problem</a></li>
+<li><a href="https://jeremykun.com/2013/11/08/adversarial-bandits-and-the-exp3-algorithm/" target="_blank" rel="noopener">Adversarial Bandits and the Exp3 Algorithm</a></li>
+<li><a href="https://banditalgs.com/" target="_blank" rel="noopener">A blog of bandit algorithms</a></li>
+<li><a href="http://web.eecs.umich.edu/~jabernet/eecs598course/fall2015/web/notes/lec22_120315.pdf" target="_blank" rel="noopener">Lecture 22: Adversarial Multi_Armed Bandits</a></li>
+</ul>
+<h2 id="Stochastic"><a href="#Stochastic" class="headerlink" title="Stochastic"></a>Stochastic</h2><h2 id="Adversarial"><a href="#Adversarial" class="headerlink" title="Adversarial"></a>Adversarial</h2><h4 id="1-Setting"><a href="#1-Setting" class="headerlink" title="1. Setting"></a>1. Setting</h4><p><img src="./bandit1.png" width="98%"></p>
+<p>Adversarial bandit可以看做是赌徒与赌场老板玩的一个游戏，与stochastic设定相同，玩家要多次尝试去拉老虎机，以此验证自己对每台老虎机吐钱概率的belief，最小化的目标为自己玩游戏的regret</p>
+<script type="math/tex; mode=display">
+G(T)=\sum_{t=0}^{T}R_{a_{i}}(t)</script><p>赌场老板的目标是尽可能少让赌徒拿钱，目标有两种设定，一种是最大化赌徒的weak regret，即假设赌徒从头到尾只去尝试吐钱概率最大的老虎机，最终可以得到的reward与实际赌徒得到reward的差值：</p>
+<script type="math/tex; mode=display">
+\text{Weak Regret}=\max_{a_{t}}\sum_{t=0}^{T}R_{a_{t}}(t)-G(T)</script><p>与之相比，另一种设定是最大化赌徒的regret，即假设赌徒从头到尾只选取最优策略可以拿到的reward与实际赌徒拿到的reward差值</p>
+<script type="math/tex; mode=display">
+\text{Regret}=\max_{\pi}\mathbb{E}_{a\sim{\pi}}[\sum_{t=0}^{T}R_{a_{t}}(t)]-G(T)</script><p><em>看起来weak regret和regret对于stochastic bandit问题是等价的，因为stochastic bandit中最优的老虎机不会发生变化，reward的概率值也不会发生变化，其optimal policy是greedy的</em></p>
+<h4 id="2-Exp3"><a href="#2-Exp3" class="headerlink" title="2. Exp3"></a>2. Exp3</h4><p>Exp3的全称是 Exponential weight algorithm for exploration and exploitation</p>
+<p>算法的核心思想是对于每个可选择的action维护一组weight，用这些weight来决定下一步中应当选择哪个action，若得到的reward是好的，就让相关的weight增长，反之则降低相关的weight，由此达到根据adversary动态调节policy的目的</p>
+<p>算法还需要一个exploration参数 $\gamma \in [0,1]$， $\gamma$ 越大则Exp3算法会越倾向于用均匀分布来explore，反之则会更加依赖参数 $w$ 来决定探索策略</p>
+<blockquote>
+<p>Given $\gamma \in [0,1]$, initialize the weights $w_i(1) = 1$ for $i = 1$, $\dots, K$;</p>
+<p>In each round t:</p>
+<ol>
+<li>Set $\displaystyle p_i(t) = (1-\gamma)\frac{w_i(t)}{\sum_{j=1}^K w_j(t)} + \frac{\gamma}{K}$ for each $i$;</li>
+<li>Draw the next action $i_t$ randomly according to the distribution of $p_i(t)$;</li>
+<li>Observe reward $R_{i_t}(t)$;</li>
+<li>Define the estimated reward $\hat{R}_{i_t}(t)$ to be $\displaystyle \frac{R_{i_t}(t)}{p_{i_t}(t)}$;</li>
+<li>Set $\displaystyle w_{i_t}(t+1) = w_{i_t}(t) \exp(\frac{\gamma \hat{R}_{i_t}(t)}{K})$;</li>
+<li>Set all other $w_j(t+1) = w_j(t)$;</li>
+</ol>
+</blockquote>
+<h4 id="3-Theoretical-analysis"><a href="#3-Theoretical-analysis" class="headerlink" title="3. Theoretical analysis"></a>3. Theoretical analysis</h4><p>首先分析Exp3的理论期望regret</p>
+<blockquote>
+<p><strong>Theorem 1</strong>: For any $K &gt; 0$, $\gamma \in (0, 1]$, and any stopping time $T \in \mathbb{N}$</p>
+<script type="math/tex; mode=display">
+G_{\textup{max}}(T) - \mathbb{E}(G_{\textup{Exp3}}(T)) \leq (e-1)\gamma G_{\textup{max}}(T) + \frac{K \log K}{\gamma}.</script></blockquote>
+<p>这个定理给出了Exp3的regret upper bound，我们可以看出</p>
+<ul>
+<li>过大的 $\gamma$ 会导致这个upper bound第一项过大，失去其本来的意义，因为过大的 $\gamma$ 实际代表的是对exploration的倾向性</li>
+<li>当action数量很多时，过小的 $\gamma$ 会导致第二项很大，过小的 $\gamma$ 代表的是对exploitation的倾向性</li>
+</ul>
+<p>综上，从该upper bound的形式即可看出exploration与exploitation之间的矛盾，如何挑选 $\gamma$ 的值是一个重要的问题，因此这里引出第二个引理</p>
+<blockquote>
+<p><strong>Corollary 2</strong>: Assume that $G_{\textup{max}}(T)$ is bounded by $g$, and that Exp3 is run with</p>
+<script type="math/tex; mode=display">
+\displaystyle \gamma = \min \left ( 1, \sqrt{\frac{K \log K}{(e-1)g}} \right )</script><p>Then the weak regret of Exp3 is bounded by $2\sqrt{(e-1)gK\log K}$ for any reward.</p>
+</blockquote>
+<p>这里注意当reward分配是服从Bernoulli distribution时，这个 $G_{max}(T)$ 的upper bound $g$ 绝大多数情况下都等于 $n$ ，即玩bandit游戏的步数，也就是说Exp3得到的regret关于步数是 $O(\sqrt{(n)})$ 的关系（可以看出adversarial bandit场景下的regret还是要比stochastic场景下 $O(\log(n))$ 级别大很多</p>
+<h2 id="Markovian"><a href="#Markovian" class="headerlink" title="Markovian"></a>Markovian</h2>
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Chen Shawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="http://yoursite.com/2019/09/03/multi-arm-bandit/" title="Notes for Multi-Arm Bandit Problems">http://yoursite.com/2019/09/03/multi-arm-bandit/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Paper-reading/" rel="tag"># Paper reading</a>
+              <a href="/tags/Research/" rel="tag"># Research</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/07/21/equivalence-between-sql-and-pg/" rel="prev" title="Rethinking The Equivalence between Soft Q-Learning and Policy Gradient">
+      <i class="fa fa-chevron-left"></i> Rethinking The Equivalence between Soft Q-Learning and Policy Gradient
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/09/09/2019-fall-review/" rel="next" title="MARL调研汇总">
+      MARL调研汇总 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">1.</span> <span class="nav-text">References</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stochastic"><span class="nav-number">2.</span> <span class="nav-text">Stochastic</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Adversarial"><span class="nav-number">3.</span> <span class="nav-text">Adversarial</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Setting"><span class="nav-number">3.0.1.</span> <span class="nav-text">1. Setting</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Exp3"><span class="nav-number">3.0.2.</span> <span class="nav-text">2. Exp3</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Theoretical-analysis"><span class="nav-number">3.0.3.</span> <span class="nav-text">3. Theoretical analysis</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Markovian"><span class="nav-number">4.</span> <span class="nav-text">Markovian</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chen Shawn"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Chen Shawn</p>
+  <div class="site-description" itemprop="description">Daily life of eating, sleeping, and messing around</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChenShawn" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChenShawn" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:c.x.zhao@hotmail.com" title="E-Mail → mailto:c.x.zhao@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/yourname" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/yukio-2" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;yukio-2" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Zhihu</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chen Shawn</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.3" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"left","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":1}});</script></body>
+</html>

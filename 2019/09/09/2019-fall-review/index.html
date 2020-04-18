@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="调研汇总multi-agent方向的方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MARL调研汇总">
+<meta property="og:url" content="http://yoursite.com/2019/09/09/2019-fall-review/index.html">
+<meta property="og:site_name" content="Chen Shawn&#39;s Blogs">
+<meta property="og:description" content="调研汇总multi-agent方向的方法">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2019/09/09/2019-fall-review/stochastic-game.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/09/2019-fall-review/proposition.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/09/2019-fall-review/oracle.png">
+<meta property="article:published_time" content="2019-09-09T08:54:44.000Z">
+<meta property="article:modified_time" content="2020-04-18T07:53:35.574Z">
+<meta property="article:author" content="Chen Shawn">
+<meta property="article:tag" content="Paper reading">
+<meta property="article:tag" content="Research">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2019/09/09/2019-fall-review/stochastic-game.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/09/09/2019-fall-review/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>MARL调研汇总 | Chen Shawn's Blogs</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Chen Shawn's Blogs</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">╭(●｀∀´●)╯ ╰(●’◡’●)╮</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>Schedule</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ChenShawn" class="github-corner" title="Read some fucking stupid codes here..." aria-label="Read some fucking stupid codes here..." rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/09/2019-fall-review/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Chen Shawn">
+      <meta itemprop="description" content="Daily life of eating, sleeping, and messing around">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chen Shawn's Blogs">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MARL调研汇总
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-09-09 16:54:44" itemprop="dateCreated datePublished" datetime="2019-09-09T16:54:44+08:00">2019-09-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-04-18 15:53:35" itemprop="dateModified" datetime="2020-04-18T15:53:35+08:00">2020-04-18</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>调研汇总multi-agent方向的方法</p>
+<a id="more"></a>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>MARL的问题设定早在上个世纪就已经被提出，在深度学习与强化学习兴起之前，在POMDP、game theory、evolutionary strategy等领域都已经有大量研究工作围绕该问题展开</p>
+<p>MARL一般采用stochastic game作为其数学定义，相比于MDP，stochastic game可以看作是MDP在多智能体方面的延伸，其state transition同时受到所有agent的action影响，where each agent can only get local observation instead of global state from the environment，reward由global state给出，每个agent的reward定义可以不同</p>
+<p><img src="./stochastic-game.png" width="98%"></p>
+<p>除了single-agent RL的常规问题以外，MARL会带来的的新问题包括：</p>
+<ul>
+<li><strong>Non-stationary:</strong> 假设每个agent的observation都包含有其他agent的行为与状态，当所有agent同时从环境中学习时，每个agent的policy都会发生变化，使得environment的state transition probability随之变化，这违背了RL对MDP中state distribution为stationary distribution的基本假设</li>
+<li><strong>Non-Markovian:</strong> 在2011年的文章 <a href="http://www.glaurent.free.fr/papers/Laurent2011world.pdf" target="_blank" rel="noopener">The World of Independent Learners is not Markovian</a> 中，作者指出对于independent learners所构成的世界环境，如果各个agent之间不存在沟通，那么该环境不满足Markov性质，这也打破可MDP有关Markov性质的基础假设</li>
+<li><strong>Overfitting to the other agents’ policies:</strong> DeepMind发表于NIPS-2017的文章 <a href="https://arxiv.org/pdf/1711.00832.pdf" target="_blank" rel="noopener">A Unified Game-Theoretic Approach to Multiagent Reinforcement Learning</a> 指出，用single-agent RL训练得到的policy往往容易过拟合对手策略，因而无法在面对不同策略的对手时保持足够的泛化能力。这种现象在游戏AL任务中非常普遍，但截至目前为止，学术界很少有对强化学习模型泛化能力的系统性研究</li>
+<li><strong>Action space too big:</strong> 一种将MARL转化为普通RL的方法是将所有合作博弈的agent认为是一个整体，所有agent的observation集合构成了整体的global state，所有agent的action构成了整体的action，这样的做法对agent的数量增加不具有可扩展性，假设环境中一共有n个agent，每个agent可选择的action有k种，那么整体policy的action就有 $n^{k}$ 种action，指数级大小的action space对于需要scalable的环境来说是无法接受的。截止目前为止，学术界很少有研究聚焦如何在拥有大量agent的环境中训练MARL模型</li>
+<li><strong>Communication:</strong> 尽管agent的observation只包含了global state的局部信息，agent可以通过交流来获取更多的信息，假设所有agent都可以互相交流，且交流是没有成本的，那么实际上每个agent都相当于拥有了整个global state的信息。近年来很多MARL的研究假设agent之间互相交流是有成本的，核心问题在于如何使用尽可能少的交流次数使得模型达到令人满意的performance。需要指出，这种假设对于一些特定领域的MARL应用落地是很有价值的，例如network routing问题中每个agent可能对应的是一个路由器，不同路由器之间每次交流对应数据报文互传，交流过多可能会严重降低网络的传输效率</li>
+</ul>
+<h2 id="OpenAI系列"><a href="#OpenAI系列" class="headerlink" title="OpenAI系列"></a>OpenAI系列</h2><p>OpenAI做MARL的主要落脚点有二，一是连续state-action space的机器人控制问题，二是如Dota这样复杂环境下的游戏AI。前者在现实环境中模拟成本较高，后者的trajectory极长且state space为partial observable，由此在本身就已经足够巨大的解空间中为inference带来不确定性，以上两类任务对强化学习算法共同的要求就是高效的exploration，让模型收敛所需的样本量尽可能少，也正是在这种背景下，OpenAI从一开始的着眼点就是算法的迭代效率</p>
+<h3 id="Multi-Agent-Actor-Critic-for-Mixed-Cooperative-Competitive-Environments"><a href="#Multi-Agent-Actor-Critic-for-Mixed-Cooperative-Competitive-Environments" class="headerlink" title="Multi-Agent Actor-Critic for Mixed Cooperative-Competitive Environments"></a><a href="https://arxiv.org/pdf/1706.02275.pdf" target="_blank" rel="noopener">Multi-Agent Actor-Critic for Mixed Cooperative-Competitive Environments</a></h3><p>MARL比较具有开创意义的工作，2018年BAIR的MADDPG，学术界绝大多数的MARL研究要从这里说起</p>
+<p>作者首先考虑一个很简单的场景：假设所有agent的policy都是概率为0.5的Bernoulli distribution，假设损失函数梯度 $\nabla_{\theta}J(\theta)=\mathbb{E}_{s\sim{d^{\pi},a\sim\pi}}[Q^{\pi}(s,a)\nabla_{\theta}\log\pi_{\theta}(a|s)]$ ，则单个样本估计出的随机梯度与真实梯度夹角为锐角的概率随着agent数量增加而指数级递减</p>
+<p><img src="./proposition.png" width="96%"></p>
+<p>方法也比较简单，就是用centralized critic</p>
+<p>文章放出了一个叫做 <a href="https://github.com/openai/multiagent-particle-envs" target="_blank" rel="noopener">multiagent-particle-envs</a> 的实验环境，相比之下</p>
+<ul>
+<li>MuJoCo环境的主要难点在于high dimensional continuous state and action space，如何在无穷大空间内explore，至于reward反而由于state space是连续而变得differentiable，众所周知differentiable的reward是最容易学习的</li>
+<li>Atari的主要难度在于如何在discrete action space下合理地解决credit assignment问题，如何应该long-term delayed reward，难度以Montezuma’s revenge为最</li>
+<li>而MPE的主要难点还是在于multi-agent，其他问题都很大程度上简化了，MPE的reward定义一般是距离某个目标的距离，single agent的环境下很容易学习的目标，在multi-agent的环境下有可能变得复杂一些，而且有些环境涉及到communication，有些环境是zero-sum game有些是collaborative game</li>
+</ul>
+<h3 id="Robust-Multi-Agent-Reinforcement-Learning-via-Minimax-Deep-Deterministic-Policy-Gradient"><a href="#Robust-Multi-Agent-Reinforcement-Learning-via-Minimax-Deep-Deterministic-Policy-Gradient" class="headerlink" title="Robust Multi-Agent Reinforcement Learning via Minimax Deep Deterministic Policy Gradient"></a><a href="http://aima.eecs.berkeley.edu/~russell/papers/aaai19-marl.pdf" target="_blank" rel="noopener">Robust Multi-Agent Reinforcement Learning via Minimax Deep Deterministic Policy Gradient</a></h3><p>2019年AAAI有一篇follow的工作M3DDPG，主要解决的问题是MADDPG框架下MARL训练的robustness：作者想要在优化每一个agent时，优化的场景都是对于这个agent当前state下的worst case opponent strategy。<strong>在连续动作空间下</strong>，可以借用SL中的adversarial training的思路，采用一步gradient descent来调整centralized Q-function的其他agent的action</p>
+<p>问题在于为什么我们希望在某个agent的worst case opponent strategy做优化？作者提出的解释是这样可以学习到更robustness的policy，我对此表示怀疑</p>
+<p>首先，文章中没有实验验证单步gradient对Q的影响是怎么样的，在SL中适用的piecewise-linearity vulnerability，是否在RL中仍然显著？如果in practice单步梯度对Q影响甚微，那么这个方法基本就可以看做是MADDPG的approximation了</p>
+<p>我们退一步先假设单步梯度确实可以显著影响到Q-value，那么每次用梯度更新对手策略时，为了得到一个较低的Q，往往得到的对手policy都较为激进。例如在MOBA类游戏中，激进的策略往往包含越塔强杀，强推高地，偷Roshan或者是开雾野区抓人，越是激进的策略就越容易被针对，那么每次都在worst case处优化policy实际上反而过于乐观，当前agent很容易在激进的对方策略下找到一个可以使自己Q-value很高的点，但这个位置的高Q-value并不能体现出robustness</p>
+<p>真正的robustness应该是当前agent可以对<strong>任意的对方策略</strong>下都保证Q不太差，难点在于优化的目标是$\pi$，而实际样本中只有$a, a^{-}$</p>
+<script type="math/tex; mode=display">
+\max_{\pi}\min_{\pi^{-}}\mathbb{E}_{a\sim\pi,a^{-}\sim\pi^{-}}[Q(s,a,a^{-})]</script><p>这里可以考虑MARL中一个比较老的方法minimax-Q，minimax-Q在tabular case下是保证收敛的，Q-function每次更新都会稳定地沿着Nash equilibrium移动，且每步更新保证单调性，作者也在Conclusion一节中指出，连续空间下如何解决在Q-function中找Nash equilibrium，是个很有意义的问题</p>
+<h3 id="Multiagent-Soft-Q-Learning"><a href="#Multiagent-Soft-Q-Learning" class="headerlink" title="Multiagent Soft Q-Learning"></a><a href="https://arxiv.org/pdf/1804.09817.pdf" target="_blank" rel="noopener">Multiagent Soft Q-Learning</a></h3><p>以上方法的基础框架都是DDPG，DDPG作为deterministic的RL算法，最显著的特点是给定一个state，其输出的action是deterministic的，用game theory的语言来说就是DDPG学的是一个pure strategy</p>
+<p>问题在于我们知道，multi-agent设定下pure strategy的Nash equilibrium不一定存在，更常见的形式是mixed-strategy，例如两个人玩石头剪刀布，游戏的Nash equilibrium一定是三种动作上的均匀分布，任何一方如果选择pure strategy则一定会被对手发现并找到针对性策略打败</p>
+<p>因此我们可以得到的一个结论是：MARL问题中stochastic actor相比deterministic的actor具有天然的优势，因为stochastic actor可以直接学习到mixed-strategy</p>
+<p>目前stochastic actor的两类主流方法被Berkeley/OpenAI垄断，一类是包括TRPO、PPO在内的利用二阶信息进行优化保证策略迭代稳定性的方法，另一类是包括SQL、SAC在内的最大熵RL方法，作者本文研究的内容就是用SQL来直接学习mixed strategy</p>
+<p>本文的实验内容比较水，最主要的贡献在于如何将SQL引入MARL问题上，作者的方法是让每个agent输出的action概率分布都包含全局所有agent的action，只有自己的action真正用于与环境交互，用强化学习进行训练，而其他agent的action可以用监督学习直接回归得到</p>
+<h3 id="Actor-Attention-Critic-for-Multi-Agent-Reinforcement-Learning"><a href="#Actor-Attention-Critic-for-Multi-Agent-Reinforcement-Learning" class="headerlink" title="Actor-Attention-Critic for Multi-Agent Reinforcement Learning"></a><a href="https://arxiv.org/abs/1810.02912" target="_blank" rel="noopener">Actor-Attention-Critic for Multi-Agent Reinforcement Learning</a></h3><p>主要的贡献是用self-attention去学习critic应当关注哪些agent，发表于ICML-2019，NIPS-2019的MARL文章还没整理过，目前看到的sota。与上文类似，作者使用SAC这种最大熵正则的方法来直接学习mixed strategy</p>
+<p>Section 3整体写的比较混乱，自己的观点，自己提出的方法，别人方法的问题，以及别人提出的观点与方法混在一起，幸而这篇文章理论性没有很强，想知道作者到底干了什么还是直接去github看代码吧</p>
+<h2 id="DeepMind系列"><a href="#DeepMind系列" class="headerlink" title="DeepMind系列"></a>DeepMind系列</h2><h3 id="A-Unified-Game-Theoretic-Approach-to-Multiagent-Reinforcement-Learning"><a href="#A-Unified-Game-Theoretic-Approach-to-Multiagent-Reinforcement-Learning" class="headerlink" title="A Unified Game-Theoretic Approach to Multiagent Reinforcement Learning"></a><a href="https://arxiv.org/pdf/1711.00832.pdf" target="_blank" rel="noopener">A Unified Game-Theoretic Approach to Multiagent Reinforcement Learning</a></h3><p><img src="./oracle.png" width="98%"></p>
+<h3 id="Open-ended-Learning-in-Symmetric-Zero-sum-Games"><a href="#Open-ended-Learning-in-Symmetric-Zero-sum-Games" class="headerlink" title="Open-ended Learning in Symmetric Zero-sum Games"></a><a href="http://proceedings.mlr.press/v97/balduzzi19a/balduzzi19a.pdf" target="_blank" rel="noopener">Open-ended Learning in Symmetric Zero-sum Games</a></h3><p>DeepMind的力作，发表于ICML-2019，文章很好地从game theory的角度解释了几个重要问题：</p>
+<ul>
+<li>为什么DeepMind做StarCraft要用AlphaLeague和Nash distribution这么麻烦的事情？</li>
+<li>传统的同一模型加载两边阵营的self-play训练方法存在什么问题？</li>
+<li>如何训练出能够打赢不同policy对手的agent？</li>
+</ul>
+<h3 id="Reinforcement-Learning-for-Multi-Objective-and-Constrained-Markov-Decision-Processes"><a href="#Reinforcement-Learning-for-Multi-Objective-and-Constrained-Markov-Decision-Processes" class="headerlink" title="Reinforcement Learning for Multi-Objective and Constrained Markov Decision Processes"></a><a href="http://export.arxiv.org/pdf/1901.08978" target="_blank" rel="noopener">Reinforcement Learning for Multi-Objective and Constrained Markov Decision Processes</a></h3><p>2019年年初挂在Arxiv的文章，technical detail还没看，但abstract提出的问题非常有趣：作者想要解决zero-sum game场景下，一方以RL最大化total discounted reward为目标，另一方以最大化一个bandit问题为目标，作者在Q-learning的基础上拓展，得到了一个可以保证收敛到最优的方法</p>
+<h3 id="UNDERSTANDING-amp-GENERALIZING-ALPHAGO-ZERO"><a href="#UNDERSTANDING-amp-GENERALIZING-ALPHAGO-ZERO" class="headerlink" title="UNDERSTANDING &amp; GENERALIZING ALPHAGO ZERO"></a><a href="https://openreview.net/forum?id=rkxtl3C5YX" target="_blank" rel="noopener">UNDERSTANDING &amp; GENERALIZING ALPHAGO ZERO</a></h3><p>还没来得及看，mark</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Chen Shawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="http://yoursite.com/2019/09/09/2019-fall-review/" title="MARL调研汇总">http://yoursite.com/2019/09/09/2019-fall-review/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Paper-reading/" rel="tag"># Paper reading</a>
+              <a href="/tags/Research/" rel="tag"># Research</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/09/03/multi-arm-bandit/" rel="prev" title="Notes for Multi-Arm Bandit Problems">
+      <i class="fa fa-chevron-left"></i> Notes for Multi-Arm Bandit Problems
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/09/29/iclr-2020-openreview/" rel="next" title="ICLR-2020 OpenReview汇总">
+      ICLR-2020 OpenReview汇总 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenAI系列"><span class="nav-number">2.</span> <span class="nav-text">OpenAI系列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Multi-Agent-Actor-Critic-for-Mixed-Cooperative-Competitive-Environments"><span class="nav-number">2.1.</span> <span class="nav-text">Multi-Agent Actor-Critic for Mixed Cooperative-Competitive Environments</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Robust-Multi-Agent-Reinforcement-Learning-via-Minimax-Deep-Deterministic-Policy-Gradient"><span class="nav-number">2.2.</span> <span class="nav-text">Robust Multi-Agent Reinforcement Learning via Minimax Deep Deterministic Policy Gradient</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Multiagent-Soft-Q-Learning"><span class="nav-number">2.3.</span> <span class="nav-text">Multiagent Soft Q-Learning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Actor-Attention-Critic-for-Multi-Agent-Reinforcement-Learning"><span class="nav-number">2.4.</span> <span class="nav-text">Actor-Attention-Critic for Multi-Agent Reinforcement Learning</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DeepMind系列"><span class="nav-number">3.</span> <span class="nav-text">DeepMind系列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#A-Unified-Game-Theoretic-Approach-to-Multiagent-Reinforcement-Learning"><span class="nav-number">3.1.</span> <span class="nav-text">A Unified Game-Theoretic Approach to Multiagent Reinforcement Learning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Open-ended-Learning-in-Symmetric-Zero-sum-Games"><span class="nav-number">3.2.</span> <span class="nav-text">Open-ended Learning in Symmetric Zero-sum Games</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reinforcement-Learning-for-Multi-Objective-and-Constrained-Markov-Decision-Processes"><span class="nav-number">3.3.</span> <span class="nav-text">Reinforcement Learning for Multi-Objective and Constrained Markov Decision Processes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UNDERSTANDING-amp-GENERALIZING-ALPHAGO-ZERO"><span class="nav-number">3.4.</span> <span class="nav-text">UNDERSTANDING &amp; GENERALIZING ALPHAGO ZERO</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chen Shawn"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Chen Shawn</p>
+  <div class="site-description" itemprop="description">Daily life of eating, sleeping, and messing around</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChenShawn" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChenShawn" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:c.x.zhao@hotmail.com" title="E-Mail → mailto:c.x.zhao@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/yourname" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/yukio-2" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;yukio-2" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Zhihu</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chen Shawn</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.3" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"left","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":1}});</script></body>
+</html>

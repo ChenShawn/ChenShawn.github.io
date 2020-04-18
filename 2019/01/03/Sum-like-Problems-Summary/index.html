@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="未完成，待继续更新。。。 1. Two Sum最基本的hash table题，复杂度$O(N)$">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Array类问题总结">
+<meta property="og:url" content="http://yoursite.com/2019/01/03/Sum-like-Problems-Summary/index.html">
+<meta property="og:site_name" content="Chen Shawn&#39;s Blogs">
+<meta property="og:description" content="未完成，待继续更新。。。 1. Two Sum最基本的hash table题，复杂度$O(N)$">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-01-03T05:48:50.000Z">
+<meta property="article:modified_time" content="2020-04-18T07:53:35.594Z">
+<meta property="article:author" content="Chen Shawn">
+<meta property="article:tag" content="Coding">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/01/03/Sum-like-Problems-Summary/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Array类问题总结 | Chen Shawn's Blogs</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Chen Shawn's Blogs</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">╭(●｀∀´●)╯ ╰(●’◡’●)╮</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>Schedule</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ChenShawn" class="github-corner" title="Read some fucking stupid codes here..." aria-label="Read some fucking stupid codes here..." rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/03/Sum-like-Problems-Summary/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Chen Shawn">
+      <meta itemprop="description" content="Daily life of eating, sleeping, and messing around">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chen Shawn's Blogs">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Array类问题总结
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-01-03 13:48:50" itemprop="dateCreated datePublished" datetime="2019-01-03T13:48:50+08:00">2019-01-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-04-18 15:53:35" itemprop="dateModified" datetime="2020-04-18T15:53:35+08:00">2020-04-18</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><em>未完成，待继续更新。。。</em></p>
+<h2 id="1-Two-Sum"><a href="#1-Two-Sum" class="headerlink" title="1. Two Sum"></a>1. Two Sum</h2><p>最基本的hash table题，复杂度$O(N)$<br><a id="more"></a><br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">twoSum</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; table;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; ans;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;nums.size(); i++) &#123;</span><br><span class="line">            table[nums[i]] = i;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;nums.size(); i++) &#123;</span><br><span class="line">            <span class="keyword">auto</span> iter = table.find(target - nums[i]);</span><br><span class="line">            <span class="keyword">if</span> (iter != table.end() &amp;&amp; iter-&gt;second != i) &#123;</span><br><span class="line">                ans.push_back(i);</span><br><span class="line">                ans.push_back(iter-&gt;second);</span><br><span class="line">                <span class="keyword">return</span> ans;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h2 id="167-Two-Sum-II-Input-array-is-sorted"><a href="#167-Two-Sum-II-Input-array-is-sorted" class="headerlink" title="167. Two Sum II - Input array is sorted"></a>167. Two Sum II - Input array is sorted</h2><p>一看到sorted就想到binary search，花了很大的时间代价思考，然而这题最优解是$O(N)$的，要用binary search反而得$O(N\log{N})$，得不偿失。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">twoSum</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; ans;</span><br><span class="line">        <span class="keyword">int</span> left = <span class="number">1</span>, right = nums.size();</span><br><span class="line">        <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[left - <span class="number">1</span>] + nums[right - <span class="number">1</span>] &lt; target) &#123;</span><br><span class="line">                left ++;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[left - <span class="number">1</span>] + nums[right - <span class="number">1</span>] &gt; target) &#123;</span><br><span class="line">                right --;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                ans.push_back(left);</span><br><span class="line">                ans.push_back(right);</span><br><span class="line">                <span class="keyword">return</span> ans;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>有关binary search解法，唯一需要注意的点就是在求middle的时候，以往的不严谨写法一般是<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">middle = (left + right) / <span class="number">2</span>;</span><br></pre></td></tr></table></figure><br>其中<code>left + right</code>在数组较大时容易溢出，更加严谨的写法是<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">middle = left + ((right - left) &gt;&gt; <span class="number">1</span>);</span><br></pre></td></tr></table></figure></p>
+<h2 id="15-3Sum"><a href="#15-3Sum" class="headerlink" title="15. 3Sum"></a>15. 3Sum</h2><p>我人生中面试最丢人的时刻，就是在百度面试时被问及这道题的时候，那时我给出的解法是$O(N^{2}\log{N})$的，即先排序然后最内层循环用binary search搜。</p>
+<p>然而这道题的解法意外的简单，假设三个数分别为a, b, c，思路就是固定a，然后用two sum的办法去找b和c，由于two sum有$O(N)$解，则此题复杂度为$O(N^{2})$</p>
+<p>我的写法比较繁琐，耗时900+ms，说明这个写法思路虽然对了，但效率上有比较严重的问题。在这个case种，用iterator比直接用下标慢，且容易写错，在对iterator有更深入的理解之前应当避免使用这种写法。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; <span class="title">threeSum</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; ans;</span><br><span class="line">        <span class="keyword">if</span> (nums.empty())</span><br><span class="line">            <span class="keyword">return</span> ans;</span><br><span class="line">        <span class="keyword">int</span> anchor;</span><br><span class="line">        sort(nums.begin(), nums.end());</span><br><span class="line">        <span class="keyword">auto</span> it = nums.begin();</span><br><span class="line">        <span class="keyword">while</span> (it != nums.end()) &#123;</span><br><span class="line">            anchor = *it;</span><br><span class="line">            <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">tmp</span><span class="params">(<span class="number">3</span>, *it)</span></span>;</span><br><span class="line">            twoSum(it, nums.end(), <span class="number">0</span> - (*it), tmp, ans);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Skip duplicate elements</span></span><br><span class="line">            <span class="keyword">while</span> (it != nums.end() &amp;&amp; (*it) == anchor)</span><br><span class="line">                ++it;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">twoSum</span><span class="params">(<span class="keyword">const</span> <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::iterator&amp; begin, </span></span></span><br><span class="line"><span class="function"><span class="params">                <span class="keyword">const</span> <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::iterator&amp; end,</span></span></span><br><span class="line"><span class="function"><span class="params">                <span class="keyword">int</span> target, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; tmp,</span></span></span><br><span class="line"><span class="function"><span class="params">                <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt;&amp; ans)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::iterator it = begin + <span class="number">1</span>;</span><br><span class="line">        <span class="built_in">map</span>&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; table;</span><br><span class="line">        <span class="keyword">int</span> anchor;</span><br><span class="line">        <span class="keyword">while</span> (it != end) &#123;</span><br><span class="line">            table[*it] = it - begin;</span><br><span class="line">            ++it;</span><br><span class="line">        &#125;</span><br><span class="line">        it = begin + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (it != end) &#123;</span><br><span class="line">            anchor = *it;</span><br><span class="line">            <span class="keyword">auto</span> res = table.find(target - (*it));</span><br><span class="line">            <span class="keyword">if</span> (res != table.end() &amp;&amp; res-&gt;second &gt; (it - begin)) &#123;</span><br><span class="line">                tmp[<span class="number">1</span>] = res-&gt;first;</span><br><span class="line">                tmp[<span class="number">2</span>] = *it;</span><br><span class="line">                ans.push_back(tmp);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// Skip duplicate elements</span></span><br><span class="line">            <span class="keyword">while</span> (it != end &amp;&amp; (*it) == anchor)</span><br><span class="line">                ++it;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>讨论区里最高赞答案如下，效率bottleneck主要在于map的开销，由于算法一开始已经将数组排好序，存map和查找的开销是可以省掉的。具体做法为</p>
+<ul>
+<li>在搜2Sum的时候，用头尾两个指针<code>lo</code>和<code>hi</code></li>
+<li>若<code>nums[lo] + nums[hi] &lt; target</code>，lo右移</li>
+<li>若<code>nums[lo] + nums[hi] &lt; target</code>，hi左移</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> List&lt;List&lt;Integer&gt;&gt; threeSum(<span class="keyword">int</span>[] num) &#123;</span><br><span class="line">    Arrays.sort(num);</span><br><span class="line">    List&lt;List&lt;Integer&gt;&gt; res = <span class="keyword">new</span> LinkedList&lt;&gt;(); </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; num.length-<span class="number">2</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (i == <span class="number">0</span> || (i &gt; <span class="number">0</span> &amp;&amp; num[i] != num[i-<span class="number">1</span>])) &#123;</span><br><span class="line">            <span class="keyword">int</span> lo = i+<span class="number">1</span>, hi = num.length-<span class="number">1</span>, sum = <span class="number">0</span> - num[i];</span><br><span class="line">            <span class="keyword">while</span> (lo &lt; hi) &#123;</span><br><span class="line">                <span class="keyword">if</span> (num[lo] + num[hi] == sum) &#123;</span><br><span class="line">                    res.add(Arrays.asList(num[i], num[lo], num[hi]));</span><br><span class="line">                    <span class="comment">// Skip duplicate elements</span></span><br><span class="line">                    <span class="keyword">while</span> (lo &lt; hi &amp;&amp; num[lo] == num[lo+<span class="number">1</span>]) lo++;</span><br><span class="line">                    <span class="keyword">while</span> (lo &lt; hi &amp;&amp; num[hi] == num[hi-<span class="number">1</span>]) hi--;</span><br><span class="line">                    lo++; hi--;</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (num[lo] + num[hi] &lt; sum) &#123;</span><br><span class="line">                    lo++;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    hi--;</span><br><span class="line">                &#125;</span><br><span class="line">           &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="18-4Sum"><a href="#18-4Sum" class="headerlink" title="18. 4Sum"></a>18. 4Sum</h2><p>既然3Sum只是在2Sum的基础上简单扩展，直接将这道题当做3Sum的扩展即可，复杂度$O(N^{3})$。代码写的比3Sum稍简洁了一些，去重的关键有两点</p>
+<ul>
+<li>在for循环的末尾跳过之后的重复元素</li>
+<li>一开始sort整个数组，并保证对每组答案<code>[a, b, c, d]</code>，必须满足<code>a &lt;= b &lt;= c &lt;= d</code></li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 28ms, faster than 61.58% of the codes </span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; <span class="title">fourSum</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; ans;</span><br><span class="line">        <span class="keyword">if</span> (nums.empty())</span><br><span class="line">            <span class="keyword">return</span> ans;</span><br><span class="line">        sort(nums.begin(), nums.end());</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;nums.size(); i++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j=i+<span class="number">1</span>; j&lt;nums.size(); j++) &#123;</span><br><span class="line">                twoSum(nums, target - nums[i] - nums[j], i, j, ans);</span><br><span class="line">                <span class="keyword">while</span> (j + <span class="number">1</span> &lt; nums.size() &amp;&amp; nums[j] == nums[j + <span class="number">1</span>])</span><br><span class="line">                    j++;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">while</span> (i + <span class="number">1</span> &lt; nums.size() &amp;&amp; nums[i] == nums[i + <span class="number">1</span>])</span><br><span class="line">                i++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">twoSum</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> target, <span class="keyword">int</span> iidx, <span class="keyword">int</span> jidx, <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt;&amp; ans)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> left = jidx + <span class="number">1</span>, right = nums.size() - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[left] + nums[right] == target) &#123;</span><br><span class="line">                <span class="keyword">int</span> tmp[<span class="number">4</span>] = &#123;nums[iidx], nums[jidx], nums[left], nums[right]&#125;;</span><br><span class="line">                ans.push_back(&#123;tmp, tmp + <span class="number">4</span>&#125;);</span><br><span class="line">                <span class="comment">// Skip duplicate elements</span></span><br><span class="line">                <span class="keyword">while</span> (nums[left] == nums[left + <span class="number">1</span>])</span><br><span class="line">                    left ++;</span><br><span class="line">                <span class="keyword">while</span> (nums[right] == nums[right - <span class="number">1</span>])</span><br><span class="line">                    right --;</span><br><span class="line">                left ++; right --;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[left] + nums[right] &lt; target) &#123;</span><br><span class="line">                left ++;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                right --;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="169-Majority-Element"><a href="#169-Majority-Element" class="headerlink" title="169. Majority Element"></a>169. Majority Element</h2><blockquote>
+<p>Given an array of size n, find the majority element. The majority element is the element that appears more than ⌊ n/2 ⌋ times.</p>
+<p>You may assume that the array is non-empty and the majority element always exist in the array.</p>
+</blockquote>
+<h3 id="解法一：Brute-force"><a href="#解法一：Brute-force" class="headerlink" title="解法一：Brute force"></a>解法一：Brute force</h3><p><em>复杂度$O(N)$，运行时间4576ms</em></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">majorityElement</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = nums.size();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> k: nums) &#123;</span><br><span class="line">        <span class="keyword">int</span> cnt = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> v: nums) &#123;</span><br><span class="line">            <span class="keyword">if</span> (k == v)</span><br><span class="line">                cnt ++;</span><br><span class="line">            <span class="keyword">if</span> (cnt &gt; (n &gt;&gt; <span class="number">1</span>))</span><br><span class="line">                <span class="keyword">return</span> k;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法二：快排变形"><a href="#解法二：快排变形" class="headerlink" title="解法二：快排变形"></a>解法二：快排变形</h3><p>一种同样暴力的方法是排序</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">majorityElement</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = nums.size();</span><br><span class="line">    sort(nums.begin(), nums.end());</span><br><span class="line">    <span class="keyword">return</span> nums[(nums.size() &gt;&gt; <span class="number">1</span>)];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在各种排序算法中，快排的思路是先做partition得到重点$m$使得$nums[i]<nums[m],\forall{i}<m$且$nums[j]>nums[m],\forall{j}&gt;m$，可以想到由于众数的性质要求其出现次数必须大于⌊ n/2 ⌋，则每次partition的时候只需要递归较长的一条子串即可，代码如下</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">majorityElement</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        partition(nums, <span class="number">0</span>, nums.size() - <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> nums[(nums.size()) &gt;&gt; <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">partition</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (left &gt;= right)</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        <span class="keyword">int</span> basis = nums[left], l = left, r = right;</span><br><span class="line">        <span class="keyword">while</span> (l &lt; r) &#123;</span><br><span class="line">            <span class="keyword">while</span> (r &gt; l &amp;&amp; nums[r] &gt;= basis)</span><br><span class="line">                -- r;</span><br><span class="line">            <span class="keyword">if</span> (r &lt;= l)</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            nums[l] = nums[r];</span><br><span class="line">            <span class="keyword">while</span> (l &lt; r &amp;&amp; nums[l] &lt; basis)</span><br><span class="line">                ++ l;</span><br><span class="line">            <span class="keyword">if</span> (l &gt;= r)</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            nums[r] = nums[l];</span><br><span class="line">        &#125;</span><br><span class="line">        nums[l] = basis;</span><br><span class="line">        <span class="keyword">if</span> (l &lt; (nums.size() &gt;&gt; <span class="number">1</span>))</span><br><span class="line">            partition(nums, l + <span class="number">1</span>, right);</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (l &gt; (nums.size() &gt;&gt; <span class="number">1</span>))</span><br><span class="line">            partition(nums, left, l - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这种思路并不会降低复杂度，只是一种优化trick而已，运行时间2400ms+</p>
+<h3 id="解法三：Randomization"><a href="#解法三：Randomization" class="headerlink" title="解法三：Randomization"></a>解法三：Randomization</h3><p>最神奇的一种解法，实现思路极其简单，运行时间20ms。几何分布，由于众数出现的次数一定大于$⌊ N/2 ⌋$，那么时间复杂度期望最坏情况下为$2N$</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">majorityElement</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = nums.size();</span><br><span class="line">    srand(<span class="keyword">unsigned</span>(time(<span class="literal">NULL</span>)));</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="keyword">int</span> idx = rand() % n;</span><br><span class="line">        <span class="keyword">int</span> candidate = nums[idx];</span><br><span class="line">        <span class="keyword">int</span> counts = <span class="number">0</span>; </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">            <span class="keyword">if</span> (nums[i] == candidate)</span><br><span class="line">                counts++; </span><br><span class="line">        <span class="keyword">if</span> (counts &gt; n / <span class="number">2</span>)</span><br><span class="line">            <span class="keyword">return</span> candidate;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法四：Moore-Voting-Algorithm"><a href="#解法四：Moore-Voting-Algorithm" class="headerlink" title="解法四：Moore Voting Algorithm"></a>解法四：Moore Voting Algorithm</h3><p>第一次做基本上很难想到这种解法，20ms，这个解法让我想起最大连续子列和的题目</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">majorityElement</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> major, counts = <span class="number">0</span>, n = nums.size();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!counts) &#123;</span><br><span class="line">            major = nums[i];</span><br><span class="line">            counts = <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            counts += (nums[i] == major) ? <span class="number">1</span> : <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> major;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="229-Majority-Element-II"><a href="#229-Majority-Element-II" class="headerlink" title="229. Majority Element II"></a>229. Majority Element II</h2><blockquote>
+<p>Given an integer array of size n, find all elements that appear more than ⌊ n/3 ⌋ times.</p>
+<p><strong>Note:</strong> The algorithm should run in linear time and in O(1) space.</p>
+</blockquote>
+<p>Moore Voting Algorithm变种</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">majorityElement</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; ans;</span><br><span class="line">    <span class="keyword">if</span> (nums.empty())</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (nums.size() == <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> &#123;nums.begin(), nums.end()&#125;;</span><br><span class="line">    <span class="keyword">int</span> maj1 = <span class="number">0</span>, maj2 = <span class="number">0</span>, cnt1 = <span class="number">0</span>, cnt2 = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> val: nums) &#123;</span><br><span class="line">        <span class="keyword">if</span> (val == maj1) &#123;</span><br><span class="line">            cnt1 ++;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (val == maj2) &#123;</span><br><span class="line">            cnt2 ++;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cnt1 == <span class="number">0</span>) &#123;</span><br><span class="line">            maj1 = val;</span><br><span class="line">            cnt1 = <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cnt2 == <span class="number">0</span>) &#123;</span><br><span class="line">            maj2 = val;</span><br><span class="line">            cnt2 = <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            cnt1 --;</span><br><span class="line">            cnt2 --;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cnt1 = <span class="number">0</span>; cnt2 = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> val: nums) &#123;</span><br><span class="line">        <span class="keyword">if</span> (val == maj1)</span><br><span class="line">            cnt1 ++;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (val == maj2)</span><br><span class="line">            cnt2 ++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (cnt1 &gt; (nums.size() / <span class="number">3</span>))</span><br><span class="line">        ans.push_back(maj1);</span><br><span class="line">    <span class="keyword">if</span> (cnt2 &gt; (nums.size() / <span class="number">3</span>))</span><br><span class="line">        ans.push_back(maj2);</span><br><span class="line">    <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="112-Path-Sum"><a href="#112-Path-Sum" class="headerlink" title="112. Path Sum"></a>112. Path Sum</h2><p>二叉树，水题，只需要注意判断叶节点</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">hasPathSum</span><span class="params">(TreeNode* root, <span class="keyword">int</span> sum)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (root == <span class="literal">NULL</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">return</span> hasPathSum(root, sum, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">hasPathSum</span><span class="params">(TreeNode* root, <span class="keyword">int</span> sum, <span class="keyword">int</span> depth)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (root-&gt;left == <span class="literal">NULL</span> &amp;&amp; root-&gt;right == <span class="literal">NULL</span>)</span><br><span class="line">            <span class="keyword">return</span> sum == root-&gt;val;</span><br><span class="line">        <span class="keyword">if</span> (root-&gt;left != <span class="literal">NULL</span> &amp;&amp; hasPathSum(root-&gt;left, sum - root-&gt;val, depth + <span class="number">1</span>))</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">if</span> (root-&gt;right != <span class="literal">NULL</span> &amp;&amp; hasPathSum(root-&gt;right, sum - root-&gt;val, depth + <span class="number">1</span>))</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="113-Path-Sum-II"><a href="#113-Path-Sum-II" class="headerlink" title="113. Path Sum II"></a>113. Path Sum II</h2><p>虽然标了middle难度，但依然是水题，最基本的back-tracking操作</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; <span class="title">pathSum</span><span class="params">(TreeNode* root, <span class="keyword">int</span> sum)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; ans;</span><br><span class="line">        <span class="keyword">if</span> (root == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> ans;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; tmp;</span><br><span class="line">        pathSum(root, sum, tmp, ans);</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">pathSum</span><span class="params">(TreeNode* root, <span class="keyword">int</span> sum, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; tmp, <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt;&amp; ans)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (root-&gt;left == <span class="literal">NULL</span> &amp;&amp; root-&gt;right == <span class="literal">NULL</span> &amp;&amp; sum == root-&gt;val) &#123;</span><br><span class="line">            tmp.push_back(root-&gt;val);</span><br><span class="line">            ans.push_back(tmp);</span><br><span class="line">            tmp.pop_back();</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        tmp.push_back(root-&gt;val);</span><br><span class="line">        <span class="keyword">if</span> (root-&gt;left != <span class="literal">NULL</span>)</span><br><span class="line">            pathSum(root-&gt;left, sum - root-&gt;val, tmp, ans);</span><br><span class="line">        <span class="keyword">if</span> (root-&gt;right != <span class="literal">NULL</span>)</span><br><span class="line">            pathSum(root-&gt;right, sum - root-&gt;val, tmp, ans);</span><br><span class="line">        tmp.pop_back();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="494-Target-Sum"><a href="#494-Target-Sum" class="headerlink" title="494. Target Sum"></a>494. Target Sum</h2><p>题目是给一个数组，在每个数字前加正负号使得加和等于target的值，返回有多少种加和方案</p>
+<p>暴力做法是$O(2^{N})$，不可取，转而研究这个题是否可以化为dp求解。算法导论里学过，如果一个问题可以用dp求解，那么它一定满足两个条件</p>
+<ul>
+<li>存在最优子问题 optimal subproblem</li>
+<li>子问题之间存在重叠 overlapping between subproblem</li>
+</ul>
+<p>首先考虑一个trick来将这个问题化成一个类似于0-1背包的问题，设所有前面加正号的集合为$P$，负号的集合为$N$，那么有下面两个等式成立</p>
+<script type="math/tex; mode=display">P+N=Sum \\ P-N=target</script><p>可得$P=\frac{1}{2}(sum + target)$，至此就将题目转换成了一个类0-1背包问题——在数组中找一个子集$P$，使得P的和为$\frac{1}{2}(sum + target)$。容易想到，对于数组中的某个元素<code>nums[i]</code>，若数组存在若干个解可以加和得到S，那么也一定可以加和得到<code>S-nums[i]</code>。按照这个思路，开一个二维数组<code>dp[i][j]</code>表示前i个元素有<code>dp[i][j]</code>种方案可以加和得到<code>j</code>。接下来就非常简单了，复杂度为$O(NS)$，递推公式为</p>
+<script type="math/tex; mode=display">dp[i][j]=dp[i-1][j]+dp[i-1][j-nums[i]]</script><p>我的答案是直接照搬递推公式实现，但实际上空间复杂度还是可以继续优化的。假设数组<code>dp[i]</code>代表截至到下标i之前有多少种方案，由此只需要$dp[i]+=dp[i-nums[j]], \forall{j\in{nums}}, \forall{i\in{\{nums[j], nums[j]+1, ..., S\}}}$ （注意内循环要反过来，和0-1背包一样）</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">findTargetSumWays</span><span class="params">(<span class="keyword">const</span> <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums.empty())</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> val: nums) &#123;</span><br><span class="line">            sum += val;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (sum &lt; target || ((sum + target) &amp; <span class="number">1</span>))</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> findSubSet(nums, (sum + target) &gt;&gt; <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">findSubSet</span><span class="params">(<span class="keyword">const</span> <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; <span class="title">dp</span><span class="params">(nums.size(), <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;(target + <span class="number">1</span>, <span class="number">0</span>))</span></span>;</span><br><span class="line">        dp[<span class="number">0</span>][<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[<span class="number">0</span>] &lt;= target)</span><br><span class="line">            dp[<span class="number">0</span>][nums[<span class="number">0</span>]] += <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;nums.size(); i++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j=<span class="number">0</span>; j&lt;=target; j++) &#123;</span><br><span class="line">                dp[i][j] = dp[i - <span class="number">1</span>][j];</span><br><span class="line">                <span class="keyword">if</span> (j - nums[i] &gt;= <span class="number">0</span>)</span><br><span class="line">                    dp[i][j] += dp[i - <span class="number">1</span>][j - nums[i]];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp.back()[target];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>答案区里更简洁的代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">findTargetSumWays</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> sum = accumulate(nums.begin(), nums.end(), <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">return</span> sum &lt; s || (s + sum) &amp; <span class="number">1</span> ? <span class="number">0</span> : subsetSum(nums, (s + sum) &gt;&gt; <span class="number">1</span>); </span><br><span class="line">    &#125;   </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">subsetSum</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> dp[s + <span class="number">1</span>] = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">        dp[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> n : nums)</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = s; i &gt;= n; i--)</span><br><span class="line">                dp[i] += dp[i - n];</span><br><span class="line">        <span class="keyword">return</span> dp[s];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="653-Two-Sum-IV-Input-is-a-BST"><a href="#653-Two-Sum-IV-Input-is-a-BST" class="headerlink" title="653. Two Sum IV - Input is a BST"></a>653. Two Sum IV - Input is a BST</h2><p>Given a Binary Search Tree and a target number, return true if there exist two elements in the BST such that their sum is equal to the given target.</p>
+<p>核心思路两层循环，外循环遍历BST，内循环BST查找，复杂度$O(N\log{N})$</p>
+<p>虽说也是水题，问题在于外循环因为每次要给内循环传根节点指针，所以不能用递归遍历，外层循环应该写成非递归——非递归的写法经常忘记，权当复习吧</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">findTarget</span><span class="params">(TreeNode* root, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (root == <span class="literal">NULL</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="built_in">stack</span>&lt;TreeNode*&gt; st;</span><br><span class="line">        TreeNode *p = root, *q;</span><br><span class="line">        <span class="keyword">while</span> (p != <span class="literal">NULL</span> || !st.empty()) &#123;</span><br><span class="line">            <span class="keyword">while</span> (p != <span class="literal">NULL</span>) &#123;</span><br><span class="line">                st.push(p);</span><br><span class="line">                p = p-&gt;left;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (!st.empty()) &#123;</span><br><span class="line">                p = st.top();</span><br><span class="line">                q = findNode(root, k - p-&gt;val);</span><br><span class="line">                <span class="keyword">if</span> (q != <span class="literal">NULL</span> &amp;&amp; q != p)</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                st.pop();</span><br><span class="line">                p = p-&gt;right;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function">TreeNode* <span class="title">findNode</span><span class="params">(TreeNode* root, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (root == <span class="literal">NULL</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">if</span> (root-&gt;val == k) &#123;</span><br><span class="line">            <span class="keyword">return</span> root;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (root-&gt;val &gt; k) &#123;</span><br><span class="line">            TreeNode *p = findNode(root-&gt;left, k);</span><br><span class="line">            <span class="keyword">if</span> (p != <span class="literal">NULL</span>)</span><br><span class="line">                <span class="keyword">return</span> p;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            TreeNode *p = findNode(root-&gt;right, k);</span><br><span class="line">            <span class="keyword">if</span> (p != <span class="literal">NULL</span>)</span><br><span class="line">                <span class="keyword">return</span> p;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="39-Combination-Sum"><a href="#39-Combination-Sum" class="headerlink" title="39. Combination Sum"></a>39. Combination Sum</h2><p>题意是给一个数组，找到这个数组中所有可以加和得到target的组合，每个数字可以使用无限次</p>
+<p>很简单很基础的back-tracking题，复杂度为指数级别，然而我做了将近一个小时，动用了IDE来调bug才做出来，当前代码功力下降可见一斑</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; <span class="title">combinationSum</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">		<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; ans;</span><br><span class="line">		<span class="keyword">if</span> (nums.empty())</span><br><span class="line">			<span class="keyword">return</span> ans;</span><br><span class="line">		sort(nums.begin(), nums.end());</span><br><span class="line">		<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; tmp;</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.size(); i++) &#123;</span><br><span class="line">			dfs(nums, target, i, tmp, ans);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> ans;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> target, <span class="keyword">int</span> begin, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; tmp, <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt;&amp; ans)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (target &lt; nums[begin])</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		tmp.push_back(nums[begin]);</span><br><span class="line">		<span class="keyword">if</span> (target == nums[begin]) &#123;</span><br><span class="line">			ans.push_back(tmp);</span><br><span class="line">			tmp.pop_back();</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = begin; i&lt;nums.size(); i++) &#123;</span><br><span class="line">			dfs(nums, target - nums[begin], i, tmp, ans);</span><br><span class="line">		&#125;</span><br><span class="line">		tmp.pop_back();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="40-Combination-Sum-II"><a href="#40-Combination-Sum-II" class="headerlink" title="40. Combination Sum II"></a>40. Combination Sum II</h2><p>上面那道combinationSum的代码只把DFS迭代的起始位置从begin改成begin+1即可，水题，代码略</p>
+<h2 id="377-Combination-Sum-IV"><a href="#377-Combination-Sum-IV" class="headerlink" title="377. Combination Sum IV"></a>377. Combination Sum IV</h2><p>这道题的返回值从返回所有的组合变成了返回有多少种组合方式，这显然是一道DP。开一个长度为target+1的数组dp，其中dp[i]代表有dp[i]种方式可以加和得到i，很容易看到递推公式应该是</p>
+<script type="math/tex; mode=display">dp[i]=\sum_{j=0}^{N}\mathbb{I}(nums[j]<=i)dp[i-nums[j]]</script><p>C++测试0ms代码如下</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">combinationSum4</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.empty())</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    sort(nums.begin(), nums.end());</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">dp</span><span class="params">(target + <span class="number">1</span>, <span class="number">0</span>)</span></span>;</span><br><span class="line">    dp[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=target; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> val: nums) &#123;</span><br><span class="line">            <span class="keyword">if</span> (val &gt; i)</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                dp[i] += dp[i - val];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dp[target];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="769-Max-Chunks-To-Make-Sorted"><a href="#769-Max-Chunks-To-Make-Sorted" class="headerlink" title="769. Max Chunks To Make Sorted"></a>769. Max Chunks To Make Sorted</h2><blockquote>
+<p>Given an array arr that is a permutation of [0, 1, …, arr.length - 1], we split the array into some number of “chunks” (partitions), and individually sort each chunk.  After concatenating them, the result equals the sorted array.</p>
+<p>What is the most number of chunks we could have made?</p>
+</blockquote>
+<p>最优解法时间复杂度$O(N)$，空间$O(1)$</p>
+<ul>
+<li>要找到数组中所有的下标i，使得对于所有$j<i,k>i$，都满足$arr[j]<arr[i]$且$arr[k]>arr[i]$——满足这样条件下标个数即为最终所求的目标</li>
+<li>如何充分利用题意中数组arr是从0到N的permutation这一性质？可以想到，若下标i满足$i\geq{arr[j]},\forall{j}=0,1,…,i-1$，则i之前的数字一定可以单独分作一段</li>
+<li>具体做法就是遍历数组中的每个数字，keep track of the maximum number。由于数组是从0到N-1的permutation，如果到下标i时最大值等于i，则说明之前的所有数字</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">maxChunksToSorted</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; arr)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> cnt = <span class="number">0</span>, mval = <span class="number">0x80000000</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;arr.size(); i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (arr[i] &gt; mval)</span><br><span class="line">            mval = arr[i];</span><br><span class="line">        <span class="keyword">if</span> (i == mval)</span><br><span class="line">            cnt ++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> cnt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="768-Max-Chunks-To-Make-Sorted-II"><a href="#768-Max-Chunks-To-Make-Sorted-II" class="headerlink" title="768. Max Chunks To Make Sorted II"></a>768. Max Chunks To Make Sorted II</h2><blockquote>
+<p>This question is the same as <a href="#769-Max-Chunks-To-Make-Sorted">“Max Chunks to Make Sorted”</a> except the integers of the given array are not necessarily distinct, the input array could be up to length 2000, and the elements could be up to 10**8.</p>
+</blockquote>
+<p>看到这个答案无话可说，实实在在的智商差距</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">maxChunksToSorted</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; arr)</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">arr_cp</span><span class="params">(arr.begin(), arr.end())</span></span>;</span><br><span class="line">    sort(arr_cp.begin(), arr_cp.end());</span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">long</span> ans = <span class="number">0</span>, sum1 = <span class="number">0</span>, sum2 = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;arr.size(); i++) &#123;</span><br><span class="line">        sum1 += arr[i];</span><br><span class="line">        sum2 += arr_cp[i];</span><br><span class="line">        <span class="keyword">if</span> (sum1 == sum2)</span><br><span class="line">            ans ++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Chen Shawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="http://yoursite.com/2019/01/03/Sum-like-Problems-Summary/" title="Array类问题总结">http://yoursite.com/2019/01/03/Sum-like-Problems-Summary/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Coding/" rel="tag"># Coding</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/01/02/inpaiting-cheat-sheet/" rel="prev" title="Inpainting Resources Collection">
+      <i class="fa fa-chevron-left"></i> Inpainting Resources Collection
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/01/03/knappack/" rel="next" title="背包问题汇总">
+      背包问题汇总 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Two-Sum"><span class="nav-number">1.</span> <span class="nav-text">1. Two Sum</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#167-Two-Sum-II-Input-array-is-sorted"><span class="nav-number">2.</span> <span class="nav-text">167. Two Sum II - Input array is sorted</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-3Sum"><span class="nav-number">3.</span> <span class="nav-text">15. 3Sum</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-4Sum"><span class="nav-number">4.</span> <span class="nav-text">18. 4Sum</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#169-Majority-Element"><span class="nav-number">5.</span> <span class="nav-text">169. Majority Element</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#解法一：Brute-force"><span class="nav-number">5.1.</span> <span class="nav-text">解法一：Brute force</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解法二：快排变形"><span class="nav-number">5.2.</span> <span class="nav-text">解法二：快排变形</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解法三：Randomization"><span class="nav-number">5.3.</span> <span class="nav-text">解法三：Randomization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解法四：Moore-Voting-Algorithm"><span class="nav-number">5.4.</span> <span class="nav-text">解法四：Moore Voting Algorithm</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#229-Majority-Element-II"><span class="nav-number">6.</span> <span class="nav-text">229. Majority Element II</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#112-Path-Sum"><span class="nav-number">7.</span> <span class="nav-text">112. Path Sum</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#113-Path-Sum-II"><span class="nav-number">8.</span> <span class="nav-text">113. Path Sum II</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#494-Target-Sum"><span class="nav-number">9.</span> <span class="nav-text">494. Target Sum</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#653-Two-Sum-IV-Input-is-a-BST"><span class="nav-number">10.</span> <span class="nav-text">653. Two Sum IV - Input is a BST</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#39-Combination-Sum"><span class="nav-number">11.</span> <span class="nav-text">39. Combination Sum</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#40-Combination-Sum-II"><span class="nav-number">12.</span> <span class="nav-text">40. Combination Sum II</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#377-Combination-Sum-IV"><span class="nav-number">13.</span> <span class="nav-text">377. Combination Sum IV</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#769-Max-Chunks-To-Make-Sorted"><span class="nav-number">14.</span> <span class="nav-text">769. Max Chunks To Make Sorted</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#768-Max-Chunks-To-Make-Sorted-II"><span class="nav-number">15.</span> <span class="nav-text">768. Max Chunks To Make Sorted II</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chen Shawn"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Chen Shawn</p>
+  <div class="site-description" itemprop="description">Daily life of eating, sleeping, and messing around</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChenShawn" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChenShawn" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:c.x.zhao@hotmail.com" title="E-Mail → mailto:c.x.zhao@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/yourname" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/yukio-2" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;yukio-2" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Zhihu</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chen Shawn</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.3" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"left","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":1}});</script></body>
+</html>

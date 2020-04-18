@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="A review of robust and generalization of reinforcement learning">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Review of robust reinforcement learning">
+<meta property="og:url" content="http://yoursite.com/schedule/robust-rl.html">
+<meta property="og:site_name" content="Chen Shawn&#39;s Blogs">
+<meta property="og:description" content="A review of robust and generalization of reinforcement learning">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://chenshawn.github.io/schedule/index/interpretable.png">
+<meta property="og:image" content="https://chenshawn.github.io/schedule/index/seed_vars.png">
+<meta property="article:published_time" content="2019-11-28T12:14:54.000Z">
+<meta property="article:modified_time" content="2020-04-18T07:53:35.630Z">
+<meta property="article:author" content="Chen Shawn">
+<meta property="article:tag" content="Research">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://chenshawn.github.io/schedule/index/interpretable.png">
+
+<link rel="canonical" href="http://yoursite.com/schedule/robust-rl">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : false,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Review of robust reinforcement learning | Chen Shawn's Blogs
+</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Chen Shawn's Blogs</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">╭(●｀∀´●)╯ ╰(●’◡’●)╮</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>Schedule</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ChenShawn" class="github-corner" title="Read some fucking stupid codes here..." aria-label="Read some fucking stupid codes here..." rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+  
+  
+
+          <div class="content page posts-expand">
+            
+
+    
+    
+    
+    <div class="post-block" lang="en">
+      <header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">Review of robust reinforcement learning
+</h1>
+
+<div class="post-meta">
+  
+
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <p>A review of robust and generalization of reinforcement learning<br><a id="more"></a></p>
+<p>link: <a href="/schedule/index/images.tgz">images.tgz</a></p>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><ul>
+<li>Silver D, Hubert T, Schrittwieser J, et al. Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm.[J]. arXiv: Artificial Intelligence, 2017.</li>
+<li>Kober J, Bagnell J A, Peters J, et al. Reinforcement learning in robotics: A survey[J]. The International Journal of Robotics Research, 2013, 32(11): 1238-1274.</li>
+<li>Hu Y, Da Q, Zeng A, et al. Reinforcement Learning to Rank in E-Commerce Search Engine: Formalization, Analysis, and Application[C]. knowledge discovery and data mining, 2018: 368-377.</li>
+<li>Zoph B, Vasudevan V K, Shlens J, et al. Learning Transferable Architectures for Scalable Image Recognition[C]. computer vision and pattern recognition, 2018: 8697-8710.</li>
+<li>Bello I, Pham H, Le Q V, et al. Neural Combinatorial Optimization with Reinforcement Learning[C]. international conference on learning representations, 2017.</li>
+<li>Henderson P A, Islam R, Pineau J, et al. Deep Reinforcement Learning that Matters[C]. national conference on artificial intelligence, 2018: 3207-3214.</li>
+<li>Lanctot M, Zambaldi V, Gruslys A, et al. A Unified Game-Theoretic Approach to Multiagent Reinforcement Learning[C]. neural information processing systems, 2017: 4190-4203.</li>
+<li>Zhang A, Ballas N, Pineau J, et al. A Dissection of Overfitting and Generalization in Continuous Reinforcement Learning.[J]. arXiv: Learning, 2018.</li>
+<li>Zhang C, Bengio S, Hardt M, et al. Understanding deep learning requires rethinking generalization[C]. international conference on learning representations, 2017.</li>
+<li>Kawaguchi K, Kaelbling L P, Bengio Y, et al. Generalization in Deep Learning[J]. arXiv: Machine Learning, 2017.</li>
+<li>Madry A, Makelov A, Schmidt L, et al. Towards Deep Learning Models Resistant to Adversarial Attacks[C]. international conference on learning representations, 2018. </li>
+</ul>
+<h2 id="2-Preliminaries"><a href="#2-Preliminaries" class="headerlink" title="2. Preliminaries"></a>2. Preliminaries</h2><h3 id="2-1-Adversarial-learning"><a href="#2-1-Adversarial-learning" class="headerlink" title="2.1. Adversarial learning"></a>2.1. Adversarial learning</h3><script type="math/tex; mode=display">
+\min_{\theta}\max_{x'}\mathbb{E}_{x,y\sim{P}}[J(x',y;\theta)]\quad{} \texttt{s.t.}\ \|x-x'\|\leq{\epsilon}</script><p>其中$|.|$为任意满足定义的norm。特定条件下对抗训练的弱收敛性目前已经得到了理论证明：对于数据集中的所有样本，存在一个$\epsilon$使得其周围半径为$\epsilon$的norm ball中不存在对抗样本。相比于robust optimization，分布鲁棒性优化（distributional robust optimization）通过松弛样本背后的概率分布构造不确定性集合，以下两种优化目标互为对偶</p>
+<script type="math/tex; mode=display">
+\min_{\theta}\max_{Q}\mathbb{E}_{x,y\sim{Q}}[J(x,y;\theta)]-\epsilon W_c(P,Q) \\
+\min_{\theta}\max_{x'}\mathbb{E}_{x,y\sim{P}}[J(x',y;\theta)-\epsilon c(x,x')]</script><p>其中$W_c(.,.)$为Wasserstein距离，$c(.,.): \mathbb{R}^{n} \times \mathbb{R}^{n} \rightarrow [0, + \infty)$表示Wasserstein距离定义中概率测度支撑集上的transportation cost，是一个严格凸函数。不难看出，distributional robust optimization相当于robust optimization的松弛版本，在保障可验证的对抗样本安全边界的前提下，往往可以得到比后者更好的训练稳定性与收敛性。</p>
+<h3 id="2-2-RL-in-continuous-control"><a href="#2-2-RL-in-continuous-control" class="headerlink" title="2.2. RL in continuous control"></a>2.2. RL in continuous control</h3><p>强化学习的最终目标，是在控制agent与环境交互的过程中学习，从而最大化期望总收益。为了求解Markov随机过程中的收益最大化问题，最大期望总收益可以分解为Bellman equation的形式。另$V \in \mathbb{R}^{|\mathcal{S}|}$为价值函数，$r \in {\mathbb{R}^{|\mathcal{S}|}}$为奖励函数，$\mathcal{P}^{\pi} \in \mathbb{R}^{|\mathcal{S}|} \times \mathbb{R}^{|\mathcal{S}|}$表示在环境中执行策略$\pi$带来的转移概率，标准Bellman operator $\mathcal{T}$是$\ell_{\infty}$ norm下的$\gamma$-压缩映射：</p>
+<script type="math/tex; mode=display">
+\mathcal{T}V:=r+\gamma\mathcal{P}^{\pi}V</script><p>由于Bellman方程是一个线性递推式，可以看出求解最优策略$\pi$与求解最有价值$V$是等价的。因此按照直接求解目标的不同，强化学习方法可以大致分为基于价值（value-based）、基于策略（policy-based）、以及二者的结合actor-critic三类。</p>
+<h4 id="2-2-1-Value-based-RL"><a href="#2-2-1-Value-based-RL" class="headerlink" title="2.2.1. Value-based RL"></a>2.2.1. Value-based RL</h4><p>基于价值求解RL问题，最具代表性的算法是Q-learning，令 $Q(s,a):=r(s,a)+\mathbb{E}_{s’,a’\sim\pi}[\sum_{t=1}^{\infty}\gamma^{t}r(s’,a’)]$ 为状态-价值函数，Q-learning的迭代形式如下：</p>
+<script type="math/tex; mode=display">
+\mathcal{T}Q(s,a) := \mathbb{E}_{s,a,s'\sim\pi} [r(s,a) + \gamma \max_{a'} Q(s',a')]</script><p>由于Q-learning实际学习的目标是当前的$Q$函数所代表的greedy策略，因而是一种off-policy的算法，即当前正在学习优化的策略可以与采样策略不同。大部分基于价值的DRL算法都沿用了Q-learning的框架，深度学习兴起之后，DQN开创性地使用神经网络表示$Q$函数，训练出的RL模型可以在Atari游戏任务上达到人类水平。后续的Dueling DQN、prioritized replay、Rainbow DQN、Ape-X等方法则从不同的角度进一步提升了DQN的性能。</p>
+<h4 id="2-2-2-Policy-based-RL"><a href="#2-2-2-Policy-based-RL" class="headerlink" title="2.2.2. Policy-based RL"></a>2.2.2. Policy-based RL</h4><p>相较于value-based RL，policy-based RL方法在过去很长一段时间的研究中都没有受到足够的重视，其代表性方法策略梯度（policy gradient）长期被认为是一种方差极大难以收敛的算法。主要原因有有二：第一，策略梯度方法直接将期望总收益作为目标进行优化，使得该算法只能采用on-policy训练，这意味着策略梯度方法无法很好地应用于更复杂的RL问题中；第二，当与神经网络结合时，策略梯度训练过程中无法像value-based方法一样从理论上保证策略提升的单调性。</p>
+<p>为了解决上述问题，CPI提出了一种在原策略分布的一个有限范围内进行策略迭代，得到了一种较保守的策略迭代方式，然而该方法仍无法解决on-policy训练的问题。相比之下，TRPO采用重要性采样（importance sampling）来解耦合模型的训练与采样过程，并理论证明了使用了importance sampling后策略提升的下界：</p>
+<script type="math/tex; mode=display">
+J(\pi_{\theta}) - J(\pi')\geq \mathbb{E}_{\pi'}[\sum_{t=0}^{\infty} \gamma^{t} \frac{\pi_{\theta}(a_{t}|s_{t})}{\pi'(a_{t}|s_{t})}A(s_{t},a_{t})]-\frac{4\gamma\max_{s,a}A^{\pi}(s,a)}{(1-\gamma)^{2}}\mathbb{E}_{s\sim{d^{\pi'}}}[D_{KL}(\pi'||\pi_{\theta})]</script><p>其中$\pi_{\theta}$为当前优化的策略，$\pi’$为采样使用的策略，$J(\pi)=\mathbb{E}_{\pi}[\sum_{t=0}^{\infty}\gamma^{t}r_{t}]$为策略$\pi$下的期望总收益，$A:\mathcal{S} \times \mathcal{A} \rightarrow \mathbb{R}$为优势函数（advantage function）。基于该下界不难看出，在限定$D_{KL}(\pi’||\pi_{\theta})$范围内进行策略迭代可以保证策略的单调性提升，目标函数可以写作</p>
+<script type="math/tex; mode=display">
+\max_{\theta}\mathbb{E}_{\pi'}[\sum_{t=0}^{\infty}\gamma^{t}\frac{\pi_{\theta}(a_{t}|s_{t})}{\pi'(a_{t}|s_{t})}A(s_{t},a_{t})] \quad{} \texttt{s.t.}\ D_{KL}(\pi'||\pi_{\theta})\leq\epsilon</script><p>为了求解限定KL范围内的策略提升问题，TRPO引入了自然梯度下降，通过共轭梯度法求解自然梯度，配合步长的指数线性搜索来保证迭代严格满足理论性质；ACKTR采用克罗内克积（Kronecker product）来高效地近似Fisher信息矩阵，从而降低了TRPO的复杂度；PPO提出了两种替代损失函数，采用TRPO的一阶近似来进一步保障训练的稳定与高效。</p>
+<h4 id="2-2-3-Actor-critic"><a href="#2-2-3-Actor-critic" class="headerlink" title="2.2.3. Actor-critic"></a>2.2.3. Actor-critic</h4><blockquote>
+<p>placeholder</p>
+</blockquote>
+<h3 id="2-3-Adversarial-RL"><a href="#2-3-Adversarial-RL" class="headerlink" title="2.3. Adversarial RL"></a>2.3. Adversarial RL</h3><ul>
+<li>Pinto L, Davidson J, Sukthankar R, et al. Robust adversarial reinforcement learning[C]. international conference on machine learning, 2017: 2817-2826.</li>
+<li>Tamar A, Glassner Y, Mannor S, et al. Optimizing the CVaR via sampling[C]. national conference on artificial intelligence, 2015: 2993-2999.</li>
+<li>Tessler C, Efroni Y, Mannor S, et al. Action Robust Reinforcement Learning and Applications in Continuous Control[C]. international conference on machine learning, 2019: 6215-6224.</li>
+<li>Abdullah M A, Ren H, Bouammar H, et al. Wasserstein Robust Reinforcement Learning.[J]. arXiv: Learning, 2019.</li>
+<li>Mankowitz D J, Levine N, Jeong R, et al. Robust Reinforcement Learning for Continuous Control with Model Misspecification.[J]. arXiv: Learning, 2019.</li>
+<li>Pattanaik A, Tang Z, Liu S, et al. Robust Deep Reinforcement Learning with Adversarial Attacks[J]. adaptive agents and multi-agents systems, 2018: 2040-2042.</li>
+<li>Packer C, Gao K, Kos J, et al. Assessing Generalization in Deep Reinforcement Learning[J]. arXiv: Learning, 2018.</li>
+<li>Rajeswaran A, Ghotra S, Ravindran B, et al. EPOpt: Learning Robust Neural Network Policies Using Model Ensembles[J]. arXiv: Learning, 2016.</li>
+</ul>
+<h2 id="3-思路推进"><a href="#3-思路推进" class="headerlink" title="3. 思路推进"></a>3. 思路推进</h2><ul>
+<li>Summarize the drawback of existing works<ul>
+<li>opponent modeling: training instability, as reported in the MARL paper</li>
+<li>adversarial off-policy sampling: learning with a bad sampling policy may result in slow convergence and training instability</li>
+<li>SL regularizers: lack of interpretability</li>
+</ul>
+</li>
+<li>we show that incorporating a robustness-related regularizer in the value estimation can contribute to better robustness while maintain a good performance in training environments at the same time. (Propose the framework here) Why?<br>1) Does not need to change the environment during training. This makes the algoritm more applicable to many real world environments which has no access to the environment parameters;<br>2) Similar to the intuition of the generalization in SL, the optima with high curvatures on the loss surface often correspond to bad generalization ability of the models, because a small pertubation in the parameter space can result in severe performance degration. An appropriately defined regularizer can prevent the model from overfitting in sharp minima. </li>
+<li>Based on the intuition we propose to use a regularizer in the Bellman policy iteration scheme. The regularizer should punish the states that has high value estimations but are vulnerable to small perturbations. </li>
+<li>Define each concept mathematically:<ul>
+<li>Define Q_adv first, with perturbations subjected to a norm constraint. Thus Q_adv(s, a) can be represented implicitly using adversarial attack of Q(s, a) w.r.t. s</li>
+<li>Define \pi^<em> and \pi_adv^</em> as the optimal improvement of the current policy \pi in a infinitely small norm ball</li>
+<li>Compute the closed-form solution for the improvement of \pi under Q (<b style="color:red;">probably using a Lemma???</b>)</li>
+<li>Define \phi(\pi) as the discrepancy between the adversarial optimal policy and the optimal policy in the \epsilon norm ball, with the discrepancy measured by KL divergence</li>
+</ul>
+</li>
+<li>Propose the algorithm under the Q-learning framework</li>
+<li>Assumptions and proof for the convergence of the Q-learning algorithm under a tabular setting (<b style="color:red;">probably using a Theorem???</b>)</li>
+<li>Propose the algorithm under the TD3 framework</li>
+<li>Discussion about the intuition behind the approach (<b style="color:red;">better with figures and figures and figures…</b>)</li>
+</ul>
+<p>References:</p>
+<ul>
+<li>Azar M G, Gómez V, Kappen H J. Dynamic policy programming[J]. Journal of Machine Learning Research, 2012, 13(Nov): 3207-3245.</li>
+<li>Geist M, Scherrer B, Pietquin O. A Theory of Regularized Markov Decision Processes[J]. arXiv preprint arXiv:1901.11275, 2019.</li>
+</ul>
+<h2 id="4-实验结果"><a href="#4-实验结果" class="headerlink" title="4. 实验结果"></a>4. 实验结果</h2><p>训练过程：</p>
+<ul>
+<li>正则化函数不会对训练过程与结果带来非常显著的影响，换言之，正则函数对模型的正则化提升不需要以降低模型在训练环境上的表现为代价</li>
+<li>我们发现较小的$\epsilon$就已经足以达到满意的训练效果，虽然更大的$\epsilon$可以为模型带来更强的正则化，但过大的$\epsilon$不一定总是能够带来正面的实验效果，在一些复杂的实验环境，如Humanoid-v2下，过大的$\epsilon$可能会为训练带来带来更多的不稳定性</li>
+<li><b style="color:red">should be waiting for the new emsemble experimental results</b>在多个不同的环境中集成训练往往会带来训练的不稳定，且会降低默认训练环境下的模型表现，这种现象在复杂环境中体现的更加明显，相比于集成训练，我们的方法可以更好地保证训练的稳定性与较好的训练结果</li>
+</ul>
+<p>测试环境：</p>
+<ul>
+<li>在所有的实验环境上，我们提出的SIR-TD3无论是在NT还是HV设定下都表现出比原本的TD3算法更强的泛化能力，尤其当测试环境与训练环境相差较大时，正则化函数为模型带来的泛化能力提升也更加明显</li>
+<li>使用更大的扰动区间$\epsilon$有时可以为模型带来更好的正则化效果，但$\epsilon$大小与模型泛化能力之间的关系并不总是单调提升的。总体来说，我们发现较小的$\epsilon$就已经足以带来较好的正则化效果。</li>
+</ul>
+<p>Empirical evidence:</p>
+<ul>
+<li>在LunarLanderContinuous-v2环境上，我们发现模型学习到的策略更加具有可解释性。在该环境下，飞船距离着陆点较远时迅速下降，靠近着陆点时用较大的喷射力度稳定平衡就可以获得较高的reward，但这种策略同时也会在重力加速度发生变化时使得飞船更容易坠毁，遗憾的是，大部分无模型强化学习最终都会收敛到这种对环境变化缺乏泛化能力的策略。从图中可以看出，在TD3算法中加入我们提出的正则化函数后，模型前期的下降速度会比原始版本的TD3算法要慢，也就是所，在正则化函数的效果下，模型确实学习到了更加符合人类直觉的、更具有可解释性的、具有更强泛化能力的策略</li>
+</ul>
+<p><img src="https://chenshawn.github.io/schedule/index/interpretable.png" alt=""></p>
+<h3 id="4-1-Training"><a href="#4-1-Training" class="headerlink" title="4.1. Training"></a>4.1. Training</h3><p>以下实验结果小数点后四舍五入只保留整数部分，符号±后面的数字是half deviation</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Algo</th>
+<th style="text-align:center">Lunar</th>
+<th style="text-align:center">Walker2d</th>
+<th style="text-align:center">HalfCheetah</th>
+<th style="text-align:center">Hopper</th>
+<th style="text-align:center">Ant</th>
+<th style="text-align:center">Humanoid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TD3</td>
+<td style="text-align:center">282±8</td>
+<td style="text-align:center">5089±65</td>
+<td style="text-align:center">11581±62</td>
+<td style="text-align:center">3529±163</td>
+<td style="text-align:center">3541±78</td>
+<td style="text-align:center">6259±251</td>
+<td></td>
+</tr>
+<tr>
+<td>SIR-TD3</td>
+<td style="text-align:center">288±9</td>
+<td style="text-align:center">4007±12</td>
+<td style="text-align:center">11189±57</td>
+<td style="text-align:center">3377±31</td>
+<td style="text-align:center">5806±48</td>
+<td style="text-align:center">6489±12</td>
+<td></td>
+</tr>
+<tr>
+<td>Ensemble</td>
+<td style="text-align:center">275±8</td>
+<td style="text-align:center">4759±480</td>
+<td style="text-align:center">9282±77</td>
+<td style="text-align:center">3518±188</td>
+<td style="text-align:center">5653±172</td>
+<td style="text-align:center">6548±417</td>
+<td></td>
+</tr>
+<tr>
+<td>Ensemble+SIR</td>
+<td style="text-align:center">276±10</td>
+<td style="text-align:center">4578±19</td>
+<td style="text-align:center">11639±60</td>
+<td style="text-align:center">3534±22</td>
+<td style="text-align:center">5923±40</td>
+<td style="text-align:center">5976±280</td>
+</tr>
+<tr>
+<td>SAC</td>
+<td style="text-align:center">284±9</td>
+<td style="text-align:center">5496±51</td>
+<td style="text-align:center">16701±47</td>
+<td style="text-align:center">3754±6</td>
+<td style="text-align:center">6875±414</td>
+<td style="text-align:center">6486±4</td>
+</tr>
+<tr>
+<td>SIR-SAC</td>
+<td style="text-align:center">286±9</td>
+<td style="text-align:center">5385±16</td>
+<td style="text-align:center">16154±73</td>
+<td style="text-align:center">3550±1</td>
+<td style="text-align:center">7171±31</td>
+<td style="text-align:center">5997±5 </td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Note that it is unfair to directly compare the performance between the models with ensemble training and those without ensemble training, since the formers have never experienced any of the testing environments except the unmodified one used for training simulations.</p>
+<p>Conclusions:</p>
+<ul>
+<li>The models with SIR have much lower variance than those without an SIR. The phenomenon is more significant in complex environments such as Walker2d-v3, Hopper-v2, and Humanoid-v2, where the SIR-TD3 models have lower variance in magnitude than their TD3 counterparts.</li>
+<li>Compared with our proposed SIR models, ensemble training can significantly increase the model variance in training environments. The result can be concluded by comparing the performance standard deviation of the TD3 models and the Ensemble models, where the models with ensemble training have higher variance in magnitude than the TD3 models. Similarly, in most cases, the SIR-TD3 models with ensemble training also show higher variance of performance than the SIR-TD3 models.</li>
+</ul>
+<p>This implies that our SIR is a better solution for RL generalization than the ensemble training especially when model stability is required.</p>
+<h3 id="4-2-Integral-area-under-curves"><a href="#4-2-Integral-area-under-curves" class="headerlink" title="4.2. Integral area under curves"></a>4.2. Integral area under curves</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>epsilon</th>
+<th style="text-align:center">Lunar</th>
+<th style="text-align:center">Walker2d</th>
+<th style="text-align:center">HalfCheetah</th>
+<th style="text-align:center">Hopper</th>
+<th style="text-align:center">Ant</th>
+<th style="text-align:center">Humanoid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.00 NT</td>
+<td style="text-align:center">29.76</td>
+<td style="text-align:center">2781.17</td>
+<td style="text-align:center">2487.13</td>
+<td style="text-align:center">4389.07</td>
+<td style="text-align:center">1708.02</td>
+<td style="text-align:center"><strong>3136.36</strong></td>
+</tr>
+<tr>
+<td>0.05 NT</td>
+<td style="text-align:center">45.69</td>
+<td style="text-align:center"><strong>3541.74</strong></td>
+<td style="text-align:center"><strong>2695.17</strong></td>
+<td style="text-align:center">4458.08</td>
+<td style="text-align:center"><strong>2551.94</strong></td>
+<td style="text-align:center">3015.09</td>
+</tr>
+<tr>
+<td>0.10 NT</td>
+<td style="text-align:center"><strong>54.33</strong></td>
+<td style="text-align:center">3248.23</td>
+<td style="text-align:center">2585.83</td>
+<td style="text-align:center"><strong>4709.54</strong></td>
+<td style="text-align:center">1778.62</td>
+<td style="text-align:center">3048.04</td>
+</tr>
+<tr>
+<td>0.00 HV</td>
+<td style="text-align:center">245.56</td>
+<td style="text-align:center">968.47</td>
+<td style="text-align:center">8705.90</td>
+<td style="text-align:center">920.92</td>
+<td style="text-align:center">3556.13</td>
+<td style="text-align:center">4389.07</td>
+<td></td>
+</tr>
+<tr>
+<td>0.05 HV</td>
+<td style="text-align:center">255.77</td>
+<td style="text-align:center"><strong>1797.55</strong></td>
+<td style="text-align:center"><strong>8880.63</strong></td>
+<td style="text-align:center"><strong>1096.20</strong></td>
+<td style="text-align:center"><strong>5495.18</strong></td>
+<td style="text-align:center">4458.08</td>
+<td></td>
+</tr>
+<tr>
+<td>0.10 HV</td>
+<td style="text-align:center"><strong>264.84</strong></td>
+<td style="text-align:center">1638.21</td>
+<td style="text-align:center">8751.48</td>
+<td style="text-align:center">1005.73</td>
+<td style="text-align:center">3846.90</td>
+<td style="text-align:center"><strong>4709.54</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="4-3-Comparison-for-ensemble-training-methods"><a href="#4-3-Comparison-for-ensemble-training-methods" class="headerlink" title="4.3. Comparison for ensemble training methods"></a>4.3. Comparison for ensemble training methods</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Algo</th>
+<th style="text-align:center">Lunar</th>
+<th style="text-align:center">Walker2d</th>
+<th style="text-align:center">HalfCheetah</th>
+<th style="text-align:center">Hopper</th>
+<th style="text-align:center">Ant</th>
+<th style="text-align:center">Humanoid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ens HV</td>
+<td style="text-align:center">270.51</td>
+<td style="text-align:center">4526.66</td>
+<td style="text-align:center">8979.61</td>
+<td style="text-align:center">3070.99</td>
+<td style="text-align:center">5511.94</td>
+<td style="text-align:center"><strong>6290.51</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>Ens+SIR HV</td>
+<td style="text-align:center"><strong>271.16</strong></td>
+<td style="text-align:center"><strong>4564.77</strong></td>
+<td style="text-align:center"><strong>11322.53</strong></td>
+<td style="text-align:center"><strong>3472.28</strong></td>
+<td style="text-align:center"><strong>5701.74</strong></td>
+<td style="text-align:center">5793.81</td>
+<td></td>
+</tr>
+<tr>
+<td>Ens NT</td>
+<td style="text-align:center"><strong>28.95</strong></td>
+<td style="text-align:center">1616.33</td>
+<td style="text-align:center">1245.57</td>
+<td style="text-align:center">449.80</td>
+<td style="text-align:center">709.64</td>
+<td style="text-align:center">1764.21</td>
+<td></td>
+</tr>
+<tr>
+<td>Ens+SIR NT</td>
+<td style="text-align:center">17.04</td>
+<td style="text-align:center"><strong>1810.70</strong></td>
+<td style="text-align:center"><strong>1267.14</strong></td>
+<td style="text-align:center"><strong>654.71</strong></td>
+<td style="text-align:center"><strong>2289.40</strong></td>
+<td style="text-align:center"><strong>2992.88</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="4-4-Standard-variations-on-10-seeds"><a href="#4-4-Standard-variations-on-10-seeds" class="headerlink" title="4.4. Standard variations on 10 seeds"></a>4.4. Standard variations on 10 seeds</h3><p><img src="https://chenshawn.github.io/schedule/index/seed_vars.png" alt=""></p>
+
+      </div>
+      
+      
+      
+    </div>
+    
+
+    
+    
+    
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">1.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Preliminaries"><span class="nav-number">2.</span> <span class="nav-text">2. Preliminaries</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Adversarial-learning"><span class="nav-number">2.1.</span> <span class="nav-text">2.1. Adversarial learning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-RL-in-continuous-control"><span class="nav-number">2.2.</span> <span class="nav-text">2.2. RL in continuous control</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-Value-based-RL"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.2.1. Value-based RL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-2-Policy-based-RL"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2.2. Policy-based RL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-3-Actor-critic"><span class="nav-number">2.2.3.</span> <span class="nav-text">2.2.3. Actor-critic</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Adversarial-RL"><span class="nav-number">2.3.</span> <span class="nav-text">2.3. Adversarial RL</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-思路推进"><span class="nav-number">3.</span> <span class="nav-text">3. 思路推进</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-实验结果"><span class="nav-number">4.</span> <span class="nav-text">4. 实验结果</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-Training"><span class="nav-number">4.1.</span> <span class="nav-text">4.1. Training</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-Integral-area-under-curves"><span class="nav-number">4.2.</span> <span class="nav-text">4.2. Integral area under curves</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-Comparison-for-ensemble-training-methods"><span class="nav-number">4.3.</span> <span class="nav-text">4.3. Comparison for ensemble training methods</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-Standard-variations-on-10-seeds"><span class="nav-number">4.4.</span> <span class="nav-text">4.4. Standard variations on 10 seeds</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chen Shawn"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Chen Shawn</p>
+  <div class="site-description" itemprop="description">Daily life of eating, sleeping, and messing around</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChenShawn" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChenShawn" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:c.x.zhao@hotmail.com" title="E-Mail → mailto:c.x.zhao@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/yourname" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/yukio-2" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;yukio-2" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Zhihu</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chen Shawn</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.3" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"left","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":1}});</script></body>
+</html>

@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="知乎之前有这样一个问题：DeepMind和OpenAI身后的两大RL流派有什么具体的区别?">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DeepMind Paper Reading —— How is DeepMind Different from OpenAI">
+<meta property="og:url" content="http://yoursite.com/2019/03/18/rl-up-to-date/index.html">
+<meta property="og:site_name" content="Chen Shawn&#39;s Blogs">
+<meta property="og:description" content="知乎之前有这样一个问题：DeepMind和OpenAI身后的两大RL流派有什么具体的区别?">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2019/03/18/rl-up-to-date/table.png">
+<meta property="og:image" content="http://yoursite.com/2019/03/18/rl-up-to-date/impala.png">
+<meta property="og:image" content="http://yoursite.com/2019/03/18/rl-up-to-date/mean-field-q-learning.png">
+<meta property="og:image" content="http://yoursite.com/2019/03/18/rl-up-to-date/mean-field-ac.png">
+<meta property="og:image" content="http://yoursite.com/2019/03/18/rl-up-to-date/mb-mpo.png">
+<meta property="article:published_time" content="2019-03-18T09:09:10.000Z">
+<meta property="article:modified_time" content="2020-04-18T07:53:35.594Z">
+<meta property="article:author" content="Chen Shawn">
+<meta property="article:tag" content="Paper reading">
+<meta property="article:tag" content="Research">
+<meta property="article:tag" content="Resource collection">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2019/03/18/rl-up-to-date/table.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/03/18/rl-up-to-date/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>DeepMind Paper Reading —— How is DeepMind Different from OpenAI | Chen Shawn's Blogs</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Chen Shawn's Blogs</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">╭(●｀∀´●)╯ ╰(●’◡’●)╮</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>Schedule</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ChenShawn" class="github-corner" title="Read some fucking stupid codes here..." aria-label="Read some fucking stupid codes here..." rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/18/rl-up-to-date/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Chen Shawn">
+      <meta itemprop="description" content="Daily life of eating, sleeping, and messing around">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Chen Shawn's Blogs">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DeepMind Paper Reading —— How is DeepMind Different from OpenAI
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-03-18 17:09:10" itemprop="dateCreated datePublished" datetime="2019-03-18T17:09:10+08:00">2019-03-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-04-18 15:53:35" itemprop="dateModified" datetime="2020-04-18T15:53:35+08:00">2020-04-18</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><em>知乎之前有这样一个问题：<a href="https://www.zhihu.com/question/316626294/answer/627373838" target="_blank" rel="noopener">DeepMind和OpenAI身后的两大RL流派有什么具体的区别?</a></em></p>
+<a id="more"></a>
+<p><em>由于之前研究方向的原因，我个人对OpenAI以及UCB系列的工作更熟悉一些，这里主要是几篇DeepMind的文章梳理，也会包含一些其他的文章，持续更新</em></p>
+<h2 id="Retrace-Safe-and-Efficient-Off-Policy-Reinforcement-Learning"><a href="#Retrace-Safe-and-Efficient-Off-Policy-Reinforcement-Learning" class="headerlink" title="Retrace: Safe and Efficient Off-Policy Reinforcement Learning"></a>Retrace: Safe and Efficient Off-Policy Reinforcement Learning</h2><p>文章研究的是一个基础而关键的问题：如何将TD方法推广至off-policy。针对此问题作者提出了retrace方法，这种方法具有以下三种性质</p>
+<ul>
+<li>Low variance: avoid variance explosion by cliiping</li>
+<li>Efficient: the algorithm is able to use full returns</li>
+<li>Safety guarantee: applicable for arbitrary target policy and behavior policy</li>
+</ul>
+<p>回顾一下MDP基础知识，off-policy TD方法对应的是数学期望形式的Bellman equation，对于每一步更新，其广义的Bellman operator可以写为</p>
+<script type="math/tex; mode=display">\mathcal{R}Q(s_{t},a_{t})=Q(s_{t},a_{t})+\mathbb{E}_{\mu}[\sum_{t=1}^{T}\gamma^{t}(\prod_{i=0}^{t}c_{i})(r_{t}+\gamma\mathbb{E}_{\pi}Q(s_{t+1},.)-Q(s_{t},a_{t}))]</script><p>其中$\pi$是target policy，$\mu$是behavior policy，按照$c_{i}$的定义不同可以分为几种不同的TD方法，包括</p>
+<ol>
+<li><p><strong>Importance sampling</strong>: $c_{i}=\frac{\pi(a_{i}|s_{i})}{\mu(a_{i}|s_{i})}$</p>
+</li>
+<li><p><strong>Off-policy $Q^{\pi}(\lambda)$ and $Q^{*}(\lambda)$: $c_{i}=\lambda$</strong></p>
+</li>
+</ol>
+<p>Let $\epsilon=\max_{s}||\pi(a|s)-\mu(a|s)||_{1}$ be the <strong>off-policyness</strong>, <a href="https://arxiv.org/abs/1602.04951" target="_blank" rel="noopener"><em>Harutyunyan et al</em></a> proved that the operator defined by $c_{i}=\lambda$ is a contraction mapping with the fixed point $Q^{\pi}$ if $\lambda&lt;\frac{1-\gamma}{\gamma\epsilon}$, and the contraction mapping with the fixed point $Q^{*}$ if $\lambda&lt;\frac{1-\gamma}{2\gamma}$</p>
+<p>The author has pointed out that the convergence guarantee of this contraction mapping relies on the knowledge of $\epsilon$, which can not be evaluated in practice during the policy evaluation. Thus this is not <strong>safe</strong> for arbitrary $\pi$ and $\mu$.</p>
+<ol>
+<li><strong>Tree-backup $TB(\lambda)$: $c_{i}=\lambda\pi(a_{i}|s_{i})$</strong></li>
+</ol>
+<p>The operator defines a contraction mapping for any arbitrary $\pi$ and $\mu$, which makes it a safe algorithm. However, the algorithm is not effcient for the case when $\pi$ and $\mu$ is near, because it prevents the model to make full use of longer returns.</p>
+<ol>
+<li><strong>Retrace</strong>$(\lambda)$:d $c_{i}=\lambda\min(1,\frac{\pi(a_{i}|s_{i})}{\mu(a_{i}|s_{i}})$</li>
+</ol>
+<p>用文中作者的原话来总结</p>
+<blockquote>
+<p>$Retrace(\lambda)$ uses an importance sampling ratio truncated at 1. Compared to IS it does not suffer from variance explosion of the product of IS ratios.</p>
+<p>It does not cut the traces as much as $TB(\lambda)$, making it possible to benifit from full returns.</p>
+</blockquote>
+<p>一份表格说明$Retrace(\lambda)$和这几种方法的关系与区别</p>
+<p><img src="./table.png" width="80%"></p>
+<ul>
+<li>$Retrace(\lambda)$ is the first algorithm for off-policy evaluation and control whose convergence <strong>does not require GLIE assumption</strong>.</li>
+<li>The author proves the convergence of Watkin’s $Q(\lambda)$, which is an open problem since 1989.</li>
+<li>Experimental evaluation is performed on Atari 2600 games. I believe the major contribution of this work is that its theory extends the <em>eligibility trace algorithm</em>, and becomes the motivation of V-trace (IMPALA), which is much more applicable for large and complicated MDPs.</li>
+</ul>
+<h2 id="IMPALA-Scalable-Distributed-Deep-RL-with-Importance-Weighted-Actor-Learner-Architectures"><a href="#IMPALA-Scalable-Distributed-Deep-RL-with-Importance-Weighted-Actor-Learner-Architectures" class="headerlink" title="IMPALA: Scalable Distributed Deep-RL with Importance Weighted Actor-Learner Architectures"></a>IMPALA: Scalable Distributed Deep-RL with Importance Weighted Actor-Learner Architectures</h2><p>DeepMind在AlphaStar星际争霸AI上用到的技术之一，主要做了以下几点改进</p>
+<ol>
+<li><strong>Actor-Learner Architecture</strong></li>
+</ol>
+<p>基于A3C改进，作者采用Actor-Learner架构：</p>
+<ul>
+<li>多个Actor异步地与环境交互，将交互得到的trajectories放入全局队列，并周期性地从learner的policy网络copy参数给自己;</li>
+<li>Learner采用trajectory-based optimization的结构，通过一个LSTM网络对trajectories循环进行处理（如下图所示。该架构可以极大地提高分布式训练的吞吐量，满足data efficiency和resource utilization的要求</li>
+</ul>
+<p><img src="./impala.png" width="80%"></p>
+<ol>
+<li><strong>V-trace</strong></li>
+</ol>
+<p>由于整个架构是异步更新，actor的behavior policy会落后于learner所学习的target policy，因此本文引入了V-trace方法来对off-policyness做correction。V-trace方法的表达式形式非常恶心，首先定义对于状态$s_{i}$的value approximation $v_{i}$为:</p>
+<script type="math/tex; mode=display">v_{i}:=V(s_{i})+\sum_{t=i}^{i+n-1}\gamma^{t-i}(\prod_{k=i}^{t-1}c_{k})\delta_{t}V</script><p>其中</p>
+<ul>
+<li>$\delta_{t}{V}=\rho_{t}(r_{t}+\gamma{V}(s_{t+1})-V(s_{t}))$ 为TD error乘上一个不知道从哪里冒出来的$\rho_{t}$</li>
+<li>$\rho_{t}=\min(\bar{\rho},\frac{\pi(a_{t}|s_{t})}{\mu(a_{t}|s_{t})})$, $c_{k}=\min(\bar{c}, \frac{\pi(a_{k}|s_{k})}{\mu(a_{k}|s_{k})})$ 这两项是truncated importance sampling ratios</li>
+<li>$\bar{\rho}$和$\bar{c}$是两个常数，作者的设定是$\bar{\rho}&gt;\bar{c}$，且$\bar{c}\geq{1}$，如果这两个条件满足，那么在on-policy训练的时候V-trace operator等价于n-step Bellman target（这个性质Retrace没有</li>
+</ul>
+<p>除此以外DeepMind团队还做了一些工程优化，包括将数据准备与网络计算流水线化，用XLA编译了部分的tensorflow静态图，以及修改输入数据格式来更好地适应cudnn框架等等。</p>
+<p>由此可见，IMPALA与其说是一套算法，不如说是一套工业级强度的asynchronous deep reinforcement learning框架，DeepMind这篇文章的野心，在于希望IMPALA成为ResNet、RCNN之于CV，seq2seq、BERT之于NLP同等的baseline而存在。</p>
+<h2 id="Mean-Field-Multi-Agent-Reinforcement-Learning"><a href="#Mean-Field-Multi-Agent-Reinforcement-Learning" class="headerlink" title="Mean Field Multi-Agent Reinforcement Learning"></a>Mean Field Multi-Agent Reinforcement Learning</h2><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>发表于ICML2018的一篇文章，其实用mean field来做multi-agent RL这个思路想来还是很直观的，因为multi-agent RL中，我们的最终目标是学习最优的joint-policy，而这个全局最优的joint-policy很可能对于每个单一的agent而言都是次优的，所以每个agent的更新都应当取决于其他agent，通过交替迭代每个agent，最终的结果近似等价于对joint-policy做coordinate ascent优化。</p>
+<p>上面的思路只是基于学过PRML之后对mean field有限的理解延伸得到的，实际文章中的处理还是要更加精巧一些。具体来说，这篇文章研究的问题背景可以归纳为</p>
+<ul>
+<li>Each agent is directly interacted with a <strong>finite</strong> set of other agents</li>
+<li>Stochastic games with a <strong>finite</strong> state space and action space</li>
+<li>The global joint-policy is guaranteed to make the future state distribution <strong>stationary</strong></li>
+</ul>
+<p>这篇文章的贡献主要在于</p>
+<ul>
+<li>作者提出了一套基于mean field approximation的方法来训练multi-agent RL，在此框架下相邻agent的交互可以被简化成每一个agent与其相邻节点的action均值交互的过程。基于此formulation作者提出了<strong>mean field Q-Learning</strong>和<strong>mean field actor-critic</strong>两个算法</li>
+<li>作者证明了在<strong>finite-state stochastic game</strong>情况下，加上若干<b color="red">technical assumption</b>，mean field MARL算法最终可以收敛至Nash equilibrium</li>
+</ul>
+<p><img src="./mean-field-q-learning.png" width="80%"><br><img src="./mean-field-ac.png" width="80%"></p>
+<h3 id="以下开始吐槽"><a href="#以下开始吐槽" class="headerlink" title="以下开始吐槽"></a>以下开始吐槽</h3><p>Section 3的notation略混乱，导致读的时候比较费力，主要是由于作者上来就先假设action space是离散的，扭头就用二阶可微的条件对action space做了泰勒展开（见eq 7），再细琢磨了下发现作者其实是假设对于每一个agent，其所有相邻agent的action space可以近似看成连续的，因此eq 10处才对$\pi_{j}$用了累加形式的数学期望，却对$\pi_{-j}$用$\mathbb{E}_{\pi_{-j}}[.]$表示数学期望——然而Section 4中的证明又完全是在discrete setting下证的</p>
+<p>此外，eq 7推到eq 8这一步的近似比较牵强，作者在Appendix B中为了证明泰勒展开的二阶项可以消掉，抬手就是一个二阶Lipchitz条件——要求$\nabla{Q}$满足Lipchitz continuous条件——由于现代神经网络普遍采用ReLU激活函数，这个假设显然不成立</p>
+<p>假设太强最终会影响到算法在真实世界的任务上的适用性，虽然文章的实验比较充分，但三个实验都没有在benchmark任务上做。综上所述这几点，其实我还蛮希望可以看到这篇文章的rebuttal过程的</p>
+<p>作者在introduction中claim说mean field MARL方法可以更好地应用于多agent问题，这一点其实是非常好的motivation，因为MARL领域中，如何处理agent数量较多的任务至今仍然是一个open problem，大部分方法的训练难度/训练时间都会随着agent数量的增加呈现出至少是线性（甚至是指数级别）的增长。因此，在benchmark任务上，尤其是continuous control任务上复现下这篇文章应该是个蛮有意思的探索方向</p>
+<h3 id="Technical-Part"><a href="#Technical-Part" class="headerlink" title="Technical Part"></a>Technical Part</h3><p>接下来看看作者的证明用到了哪些assumption</p>
+<blockquote>
+<p>Each action-state pair is visited infinitely often, and the reward is bounded by some constant $K$</p>
+</blockquote>
+<ul>
+<li>$Q(s,a)$本身就是为了处理$v(s)$估计方差过大的问题而提出的，action-state pair无数次访问是$Q(s,a)$收敛的常规假设</li>
+</ul>
+<blockquote>
+<p>Agent policy满足GLIE条件</p>
+</blockquote>
+<ul>
+<li>文章中称采用的是Boltzmman policy，这种情况下随着temperature参数下降到0，policy会收敛至greedy，这条假设也是合理的</li>
+</ul>
+<blockquote>
+<p>The Nash equilibrium for $\pi$ is recognized either as 1) global optimum or 2) a saddle point expressed as</p>
+<ol>
+<li><script type="math/tex; mode=display">\mathbb{E}_{a\sim\pi^{*}}[Q(s,a)] \geq \mathbb{E}_{a\sim\pi}[Q(s,a)]</script></li>
+<li><script type="math/tex; mode=display">\mathbb{E}_{a\sim\pi^{*}}[Q(s,a)] \geq \mathbb{E}_{\pi^{j}}\mathbb{E}_{\pi_{*}^{-j}}[Q(s,a)]</script><script type="math/tex; mode=display">\mathbb{E}_{a\sim\pi^{*}}[Q(s,a)] \leq \mathbb{E}_{\pi_{*}^{j}}\mathbb{E}_{\pi^{-j}}[Q(s,a)]</script></li>
+</ol>
+</blockquote>
+<p>相比假设1假设2，这条假设是比较强的，它认为在训练中的任何时刻$t$，对每个agent单独的policy $\pi_{j}$而言，Nash equilibrium都存在。</p>
+<p>问题在哪里?这里引用<a href="https://en.wikipedia.org/wiki/Nash_equilibrium#Nash&#39;s_Existence_Theorem" target="_blank" rel="noopener">Wikipedia的Nash’s existence theorem</a>的内容：</p>
+<blockquote>
+<p>Nash proved that if we allow mixed strategies, then every game with a <strong>finite</strong> number of players in which each player can choose from <strong>finitely</strong> many <strong>pure strategies</strong> has <strong>at least one</strong> Nash equilibrium.</p>
+<p>Nash equilibria need not exist if the set of choices is <strong>infinite and noncompact</strong>. An example is a game where two players simultaneously name a natural number and the player naming the larger number wins. However, a Nash equilibrium exists if the set of choices is <strong>compact</strong> with <strong>continuous payoff</strong>. An example, in which the equilibrium is a mixture of continuously many pure strategies, is a game where two players simultaneously pick a real number between 0 and 1 (inclusive) and player one’s winnings (paid by the second player) equal the square root of the distance between the two numbers.</p>
+</blockquote>
+<p>作者在文章中也解释说这个假设太强，实验中发现即使条件不满足也可以收敛（<del>虽然实验部分并没有很好地justify这点</del></p>
+<h2 id="Model-Based-Reinforcement-Learning-via-Meta-Policy-Optimization"><a href="#Model-Based-Reinforcement-Learning-via-Meta-Policy-Optimization" class="headerlink" title="Model-Based Reinforcement Learning via Meta-Policy Optimization"></a>Model-Based Reinforcement Learning via Meta-Policy Optimization</h2><p>简称MB-MPO，Pieter Abbeel组2018年发表在CoRL的一篇文章，OpenAI巨佬John Schulman也出现在了作者列表中，本文主要的内容是利用ensemble+meta-learning的思路来学习MDP的dynamics，从而训练一个可以快速在不同task上adapt的agent。</p>
+<p>文章涉及到了两个重要的关键词：Model-based RL和meta-learning，我对这两个方向的了解都比较有限，但这篇文章的脉络很清晰，偏向于robotics方面的应用，没有什么理论分析，读起来也比较轻松愉快。实验部分非常充分，可以得到不少insights</p>
+<h3 id="Ensemble-Learning-for-Model-Dynamics"><a href="#Ensemble-Learning-for-Model-Dynamics" class="headerlink" title="Ensemble Learning for Model Dynamics"></a>Ensemble Learning for Model Dynamics</h3><p>这里的model dynamics指的是一个MDP中，在当前状态下采取某个动作后到达下一状态的映射关系$f:\mathcal{S}\times\mathcal{A}\rightarrow\mathcal{S}$，在广义的MDP定义下$f$是一个随机映射，由$f$所确定的状态转换是一个Markov随机过程。传统的model-based RL方法就是要直接去学习这个映射关系$f$，这个学习过程会非常依赖于model的准确性：即使model对于每个transition三元组$(s_{t},a_t,s_{t+1})$的预测bias都很小，最终这个bias可能会在trajectory中积累，对最终结果带来很大的bias；换用更数学的语言来说，就是在MDP的设定下最终整个trajectory的bias是不能像普通的empirical risk minimization一样被bound的，这种现象叫做distributional shift</p>
+<p>传统的解决方法包括</p>
+<ul>
+<li>用data aggregation在训练时不断加入由model与agent直接交互得到的新的trajectories</li>
+<li>避免让agent去探索model bias比较大的区域，可以训练Bayesian model来刻画model的uncertainty，或者直接训练一个生成式的模型来学习model的概率分布（文中指出这种方法训练出的agent往往过于保守）</li>
+<li>通过特殊的优化方式或优化目标，代表性工作有<a href="http://www.roboticsproceedings.org/rss11/p12.pdf" target="_blank" rel="noopener">DeepMPC: Learning Deep Latent Features for<br>Model Predictive Control</a>以及<a href="http://papers.nips.cc/paper/5183-reinforcement-learning-in-robust-markov-decision-processes" target="_blank" rel="noopener">Robust policy optimization</a></li>
+<li>Differentiable trajectory optimization，优化时会遇到与RNN类似的问题，gradients either explode or vanish</li>
+</ul>
+<p>本文的一个重要motivation在于，作者希望即使在model不是很准确的情况下agent也可以进行有效的学习，为了解决这个问题作者引入了ensemble</p>
+<script type="math/tex; mode=display">\max_{\theta}{\frac{1}{K}}\sum_{k=0}^{K}J_{k}(\theta'_{k}) \quad \text{s.t.}\ \theta'_{k}=\theta+\alpha\nabla_{\theta}J_{k}(\theta)</script><p>其中$J_{k}(\theta)$为在dynamic model $\hat{f}_{\phi_{k}}$下policy $\pi_{\theta}$的expected discounted reward</p>
+<script type="math/tex; mode=display">J_{k}(\theta)=\mathbb{E}_{a_{t}\sim\pi_{\theta}(a_{t}|s_{t})}[\sum_{t=0}^{T}\gamma^{t}R(s_{t},a_{t})|s_{t+1}=\hat{f}_{\phi_{k}}(s_{t},a_{t})]</script><h3 id="Meta-RL-with-Learned-Dynamic-models"><a href="#Meta-RL-with-Learned-Dynamic-models" class="headerlink" title="Meta-RL with Learned Dynamic models"></a>Meta-RL with Learned Dynamic models</h3><p><img src="./mb-mpo.png"></p>
+<p>在我看来，本文在meta-learning的方面并无创新之处，只是<a href="https://arxiv.org/abs/1703.03400" target="_blank" rel="noopener">MARL算法框架</a>的简单套用，因此这里不展开讨论这部分算法实现</p>
+<p>即使如此，meta-learning背后的一些思想还是很吸引我的，按照我个人的理解，加上作者在related works一节中的梳理，meta-learning主要可以分为几类</p>
+<ul>
+<li>Learning to learn</li>
+<li>Learn an initialization of the network that can quickly adapt to several different tasks sharing the same state and action space (e.g. MARL)</li>
+<li><a href="https://arxiv.org/abs/1611.02779" target="_blank" rel="noopener">RL2: Fast Reinforcement Learning via Slow Reinforcement Learning</a>, and <a href="https://arxiv.org/abs/1605.06065v1" target="_blank" rel="noopener">One-shot Learning with Memory-Augmented Neural Networks</a></li>
+</ul>
+<p>个人疑问：</p>
+<ul>
+<li>Meta-learning的定义貌似不是很清晰，meta-learning和one-shot learning, few-shot learning是什么关系？和transfer learning又是什么关系？有什么区别？</li>
+<li>MARL中，几个不同的任务可以在同一个parameter initialization的基础上通过一步gradient迭代得到，这种现象在何等程度上具有普遍性？两个语义完全不同的任务是否可以通过同一个<strong>元</strong>联系到一起？因为按照直觉来讲，利用随机梯度优化得到的网络参数应该是比较稳定的，参数空间在收敛点附近的梯度是很小的，在参数空间的微小扰动应该不足以完成一个网络的功能性迁移</li>
+<li>为什么文章中优化adapted policy只需要用原始形式的policy gradient即可，而优化meta需要用TRPO？这是否说明从meta做adaption是很容易的，优化meta是很困难的？如果两个都用TRPO会如何？</li>
+<li>作者展示了若干实验结果表明ensemble的估计方差与$D_{KL}(\pi_{\theta}||\pi_{\theta’_{k}})$呈显著正相关关系，为什么？这背后的原因值得深挖</li>
+</ul>
+<h2 id="Feedback-based-MCTS"><a href="#Feedback-based-MCTS" class="headerlink" title="Feedback-based MCTS"></a>Feedback-based MCTS</h2><p>腾讯AILab发在ICML-2018上的文章，比较难读，文章主要做了两个工作</p>
+<ul>
+<li>在continuous state space and finite action space MDP上提出了一种新的MCTS方法，按照作者的说法：“Leaf evaluators can be updated to produce a stronger tree search using previous tree search results”</li>
+<li>对上面提出的MCTS方法提供了sample complexity analysis</li>
+</ul>
+<p>除feedback-based MCTS方法以外，作者采用四种baseline作为对比</p>
+<ul>
+<li>No rollouts: 与AlphaZero设定相同</li>
+<li>Direct policy iteration</li>
+<li>Approximate value iteration</li>
+<li>Behavior clone (termed as <em>SL agent in the paper</em>)</li>
+</ul>
+<p>比较有趣的地方在于作者直接对比了AlphaZero的方法，很少有人有能力做这样的对比实验。此外实验部分还有一些细节</p>
+<ul>
+<li>直接用游戏引擎里的41维游戏信息作为输入</li>
+<li>只做了1V1的evaluation</li>
+<li>Intead of using the argmax of the UCB scores, the authors sample actions from the softmax of UCT scores</li>
+<li>Hand-crafted reward function including <em>health, damage, etc.</em></li>
+<li>Reward function mimics reward shaping proposed by <em>Ng et al.</em></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Chen Shawn
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="http://yoursite.com/2019/03/18/rl-up-to-date/" title="DeepMind Paper Reading —— How is DeepMind Different from OpenAI">http://yoursite.com/2019/03/18/rl-up-to-date/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Paper-reading/" rel="tag"># Paper reading</a>
+              <a href="/tags/Research/" rel="tag"># Research</a>
+              <a href="/tags/Resource-collection/" rel="tag"># Resource collection</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/02/28/iclr-papers/" rel="prev" title="ICLR-2019论文整理">
+      <i class="fa fa-chevron-left"></i> ICLR-2019论文整理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/03/23/yugoslavia/" rel="next" title="宇宙よりも遠い場所">
+      宇宙よりも遠い場所 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Retrace-Safe-and-Efficient-Off-Policy-Reinforcement-Learning"><span class="nav-number">1.</span> <span class="nav-text">Retrace: Safe and Efficient Off-Policy Reinforcement Learning</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IMPALA-Scalable-Distributed-Deep-RL-with-Importance-Weighted-Actor-Learner-Architectures"><span class="nav-number">2.</span> <span class="nav-text">IMPALA: Scalable Distributed Deep-RL with Importance Weighted Actor-Learner Architectures</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mean-Field-Multi-Agent-Reinforcement-Learning"><span class="nav-number">3.</span> <span class="nav-text">Mean Field Multi-Agent Reinforcement Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">3.1.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#以下开始吐槽"><span class="nav-number">3.2.</span> <span class="nav-text">以下开始吐槽</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Technical-Part"><span class="nav-number">3.3.</span> <span class="nav-text">Technical Part</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Model-Based-Reinforcement-Learning-via-Meta-Policy-Optimization"><span class="nav-number">4.</span> <span class="nav-text">Model-Based Reinforcement Learning via Meta-Policy Optimization</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Ensemble-Learning-for-Model-Dynamics"><span class="nav-number">4.1.</span> <span class="nav-text">Ensemble Learning for Model Dynamics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Meta-RL-with-Learned-Dynamic-models"><span class="nav-number">4.2.</span> <span class="nav-text">Meta-RL with Learned Dynamic models</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Feedback-based-MCTS"><span class="nav-number">5.</span> <span class="nav-text">Feedback-based MCTS</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chen Shawn"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Chen Shawn</p>
+  <div class="site-description" itemprop="description">Daily life of eating, sleeping, and messing around</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ChenShawn" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ChenShawn" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:c.x.zhao@hotmail.com" title="E-Mail → mailto:c.x.zhao@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/yourname" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/yukio-2" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;yukio-2" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Zhihu</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chen Shawn</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.3" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"left","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":1}});</script></body>
+</html>
