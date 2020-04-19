@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://chenshawn.github.io/schedule/index/interpretable.png">
 <meta property="og:image" content="https://chenshawn.github.io/schedule/index/seed_vars.png">
 <meta property="article:published_time" content="2019-11-28T12:14:54.000Z">
-<meta property="article:modified_time" content="2020-04-18T07:53:35.630Z">
+<meta property="article:modified_time" content="2020-04-19T09:01:08.351Z">
 <meta property="article:author" content="Chen Shawn">
 <meta property="article:tag" content="Research">
 <meta name="twitter:card" content="summary">
@@ -139,6 +139,16 @@
     <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>Schedule</a>
 
   </li>
+        <li class="menu-item menu-item-conferences">
+
+    <a href="/conferences-collection" rel="section"><i class="fa fa-sitemap fa-fw"></i>Conferences</a>
+
+  </li>
+        <li class="menu-item menu-item-hello-worlds">
+
+    <a href="/hello-world" rel="section"><i class="fa fa-heartbeat fa-fw"></i>Hello Worlds</a>
+
+  </li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
         </a>
@@ -238,8 +248,7 @@
 <script type="math/tex; mode=display">
 \mathcal{T}V:=r+\gamma\mathcal{P}^{\pi}V</script><p>由于Bellman方程是一个线性递推式，可以看出求解最优策略$\pi$与求解最有价值$V$是等价的。因此按照直接求解目标的不同，强化学习方法可以大致分为基于价值（value-based）、基于策略（policy-based）、以及二者的结合actor-critic三类。</p>
 <h4 id="2-2-1-Value-based-RL"><a href="#2-2-1-Value-based-RL" class="headerlink" title="2.2.1. Value-based RL"></a>2.2.1. Value-based RL</h4><p>基于价值求解RL问题，最具代表性的算法是Q-learning，令 $Q(s,a):=r(s,a)+\mathbb{E}_{s’,a’\sim\pi}[\sum_{t=1}^{\infty}\gamma^{t}r(s’,a’)]$ 为状态-价值函数，Q-learning的迭代形式如下：</p>
-<script type="math/tex; mode=display">
-\mathcal{T}Q(s,a) := \mathbb{E}_{s,a,s'\sim\pi} [r(s,a) + \gamma \max_{a'} Q(s',a')]</script><p>由于Q-learning实际学习的目标是当前的$Q$函数所代表的greedy策略，因而是一种off-policy的算法，即当前正在学习优化的策略可以与采样策略不同。大部分基于价值的DRL算法都沿用了Q-learning的框架，深度学习兴起之后，DQN开创性地使用神经网络表示$Q$函数，训练出的RL模型可以在Atari游戏任务上达到人类水平。后续的Dueling DQN、prioritized replay、Rainbow DQN、Ape-X等方法则从不同的角度进一步提升了DQN的性能。</p>
+<script type="math/tex; mode=display">\mathcal{T}Q(s,a) := \mathbb{E}_{s,a,s'\sim\pi} [r(s,a) + \gamma \max_{a'} Q(s',a')]</script><p>由于Q-learning实际学习的目标是当前的$Q$函数所代表的greedy策略，因而是一种off-policy的算法，即当前正在学习优化的策略可以与采样策略不同。大部分基于价值的DRL算法都沿用了Q-learning的框架，深度学习兴起之后，DQN开创性地使用神经网络表示$Q$函数，训练出的RL模型可以在Atari游戏任务上达到人类水平。后续的Dueling DQN、prioritized replay、Rainbow DQN、Ape-X等方法则从不同的角度进一步提升了DQN的性能。</p>
 <h4 id="2-2-2-Policy-based-RL"><a href="#2-2-2-Policy-based-RL" class="headerlink" title="2.2.2. Policy-based RL"></a>2.2.2. Policy-based RL</h4><p>相较于value-based RL，policy-based RL方法在过去很长一段时间的研究中都没有受到足够的重视，其代表性方法策略梯度（policy gradient）长期被认为是一种方差极大难以收敛的算法。主要原因有有二：第一，策略梯度方法直接将期望总收益作为目标进行优化，使得该算法只能采用on-policy训练，这意味着策略梯度方法无法很好地应用于更复杂的RL问题中；第二，当与神经网络结合时，策略梯度训练过程中无法像value-based方法一样从理论上保证策略提升的单调性。</p>
 <p>为了解决上述问题，CPI提出了一种在原策略分布的一个有限范围内进行策略迭代，得到了一种较保守的策略迭代方式，然而该方法仍无法解决on-policy训练的问题。相比之下，TRPO采用重要性采样（importance sampling）来解耦合模型的训练与采样过程，并理论证明了使用了importance sampling后策略提升的下界：</p>
 <script type="math/tex; mode=display">
@@ -592,14 +601,14 @@ J(\pi_{\theta}) - J(\pi')\geq \mathbb{E}_{\pi'}[\sum_{t=0}^{\infty} \gamma^{t} \
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-count">33</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
