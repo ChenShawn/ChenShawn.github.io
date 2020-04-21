@@ -449,7 +449,7 @@ code {
   word-wrap: break-word;
 }
 .highlight *::selection {
-  background: #424242;
+  background: #fc6423;
 }
 .highlight pre {
   border: 0;
@@ -1293,7 +1293,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #779c7d;
+  background: #2d6b16;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
