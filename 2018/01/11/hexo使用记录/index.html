@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="1. 安装nodejsnodejs官网windows版本下载链接，一路傻瓜式安装，记得把环境变量加上 2. 安装hexo">
+  <meta name="description" content="NOTE: 本文中所有提到_config.yml文件的地方  site config：表示运行hexo init的那个文件夹的目录下的_config.yml文件 theme config：表示theme下对应的文件夹中的_config.yml  1. 安装nodejsnodejs官网windows版本下载链接，一路傻瓜式安装，记得把环境变量加上">
 <meta property="og:type" content="article">
 <meta property="og:title" content="hexo使用记录">
 <meta property="og:url" content="http://yoursite.com/2018/01/11/hexo%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/index.html">
 <meta property="og:site_name" content="Chen Shawn&#39;s Blogs">
-<meta property="og:description" content="1. 安装nodejsnodejs官网windows版本下载链接，一路傻瓜式安装，记得把环境变量加上 2. 安装hexo">
+<meta property="og:description" content="NOTE: 本文中所有提到_config.yml文件的地方  site config：表示运行hexo init的那个文件夹的目录下的_config.yml文件 theme config：表示theme下对应的文件夹中的_config.yml  1. 安装nodejsnodejs官网windows版本下载链接，一路傻瓜式安装，记得把环境变量加上">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2018-01-11T08:24:53.000Z">
-<meta property="article:modified_time" content="2020-04-18T07:53:35.590Z">
+<meta property="article:modified_time" content="2020-04-22T08:28:12.556Z">
 <meta property="article:author" content="Chen Shawn">
 <meta property="article:tag" content="Manual">
 <meta name="twitter:card" content="summary">
@@ -232,7 +232,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-04-18 15:53:35" itemprop="dateModified" datetime="2020-04-18T15:53:35+08:00">2020-04-18</time>
+                <time title="Modified: 2020-04-22 16:28:12" itemprop="dateModified" datetime="2020-04-22T16:28:12+08:00">2020-04-22</time>
               </span>
 
           
@@ -253,70 +253,62 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="1-安装nodejs"><a href="#1-安装nodejs" class="headerlink" title="1. 安装nodejs"></a>1. 安装nodejs</h2><p><a href="https://nodejs.org/en/" target="_blank" rel="noopener">nodejs官网windows版本下载链接</a>，一路傻瓜式安装，记得把环境变量加上</p>
-<h2 id="2-安装hexo"><a href="#2-安装hexo" class="headerlink" title="2. 安装hexo"></a>2. 安装hexo</h2><a id="more"></a>
+        <p>NOTE: 本文中所有提到<code>_config.yml</code>文件的地方</p>
 <ul>
+<li>site config：表示运行<code>hexo init</code>的那个文件夹的目录下的<code>_config.yml</code>文件</li>
+<li>theme config：表示theme下对应的文件夹中的<code>_config.yml</code></li>
+</ul>
+<h2 id="1-安装nodejs"><a href="#1-安装nodejs" class="headerlink" title="1. 安装nodejs"></a>1. 安装nodejs</h2><p><a href="https://nodejs.org/en/" target="_blank" rel="noopener">nodejs官网windows版本下载链接</a>，一路傻瓜式安装，记得把环境变量加上</p>
+<a id="more"></a>
+<h2 id="2-安装hexo"><a href="#2-安装hexo" class="headerlink" title="2. 安装hexo"></a>2. 安装hexo</h2><ul>
 <li>先创建一个文件夹（用来存放所有blog），然后cd到该文件夹下</li>
 <li>安装hexo: <del><code>npm i -g hexo</code></del></li>
 </ul>
-<p><strong>Updated in Jan 19th, 2019:</strong><br> 旧的hexo安装方法不再支持，如果使用旧指令的话会报错显示</p>
+<p><b style="color: red">Updated in Jan 19th, 2019:</b> 旧的hexo安装方法不再支持</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ npm i -g hexo</span><br><span class="line">npm WARN deprecated titlecase@1.1.2: no longer maintained</span><br><span class="line"><span class="comment"># -------------------------</span></span><br><span class="line"><span class="comment"># Updated in Jan 19th, 2019</span></span><br><span class="line"><span class="comment"># New command to install hexo</span></span><br><span class="line">$ npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
 <ul>
 <li>初始化hexo: <code>hexo init</code></li>
+<li><em>optional: 有时候<code>hexo init</code>会在最后失败，按照提示运行<code>npm install &amp;&amp; npm audit fix</code>就行</em></li>
 </ul>
 <h2 id="3-创建github-io"><a href="#3-创建github-io" class="headerlink" title="3. 创建github.io"></a>3. 创建github.io</h2><ul>
 <li>在自己的github账号下创建一个repo，名字叫<code>yourname.github.io</code>，其中yourname=github用户名</li>
-<li><p>如果没有配置过这个github账号的话，要先在本地配置github账号信息</p>
-  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name <span class="string">"yourname"</span></span><br><span class="line">git config --global user.email <span class="string">"your_email@youremail.com"</span></span><br><span class="line">ssh-keygen -t rsa -C “your_email@youremail.com”</span><br></pre></td></tr></table></figure>
-<p>  然后会要求输入用户名密码，成功的话会在~/下生成.ssh文件夹，cd进去，<code>cat id_rsa.pub</code>，复制里面的key</p>
-<p>  打开<a href="https://github.com/settings/keys" target="_blank" rel="noopener">github账号account settings下的ssh keys</a>，点new SSH key，title随便填，Key把刚才的内容黏贴进去</p>
-</li>
+<li>如果没有配置过这个github账号的话，要先在本地配置github账号信息<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name <span class="string">"yourname"</span></span><br><span class="line">git config --global user.email <span class="string">"your_email@youremail.com"</span></span><br><span class="line">ssh-keygen -t rsa -C “your_email@youremail.com”</span><br></pre></td></tr></table></figure>
+然后会要求输入用户名密码，成功的话会在~/下生成.ssh文件夹，cd进去，<code>cat id_rsa.pub</code>，复制里面的key</li>
 </ul>
-<h2 id="4-修改-config-yml配置"><a href="#4-修改-config-yml配置" class="headerlink" title="4. 修改_config.yml配置"></a>4. 修改_config.yml配置</h2><h3 id="1-通过hexo-deploy部署"><a href="#1-通过hexo-deploy部署" class="headerlink" title="1. 通过hexo deploy部署"></a>1. 通过hexo deploy部署</h3><p>用编辑器打开blog项目，修改_config.yml文件的配置 <span style="color:red;"><b> (注意冒号之后都是有一个半角空格!) </b></span>，做好这一步之后就可以直接通过<code>hexo d</code>免密码部署到自己的github主页了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">    type: git</span><br><span class="line">    repo: https:&#x2F;&#x2F;github.com&#x2F;YourgithubName&#x2F;YourgithubName.github.io.git</span><br><span class="line">    branch: master</span><br></pre></td></tr></table></figure>
-<h3 id="2-post加密"><a href="#2-post加密" class="headerlink" title="2. post加密"></a>2. post加密</h3><ul>
-<li>运行 <code>npm install hexo-encrypt --save</code></li>
-<li>在_config.yml中添加变量  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">encrypt: </span><br><span class="line">    password: UserDefinedPassWord</span><br></pre></td></tr></table></figure></li>
-<li>通过 <code>hexo new post &quot;post_name&quot;</code> 生成的markdown文件最前面都会有变量栏，形如：  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: xxx</span><br><span class="line">date: yy-mm-dd hour:min:sec</span><br><span class="line">tags: xxx</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
-  在需要加密的markdown文件最前面加 <code>encrypt: true</code> 即可</li>
-</ul>
-<h3 id="3-修改hexo主题"><a href="#3-修改hexo主题" class="headerlink" title="3. 修改hexo主题"></a>3. 修改hexo主题</h3><p>网上讲解这个的博客很多，比如 <a href="https://www.jianshu.com/p/33bc0a0a6e90" target="_blank" rel="noopener">https://www.jianshu.com/p/33bc0a0a6e90</a></p>
-<h3 id="4-TEX语法支持"><a href="#4-TEX语法支持" class="headerlink" title="4. TEX语法支持"></a>4. TEX语法支持</h3><p>作者在配置TEX语法支持功能的时候参考了若干篇博客，链接如下</p>
+<p>打开<a href="https://github.com/settings/keys" target="_blank" rel="noopener">github账号account settings下的ssh keys</a>，点new SSH key，title随便填，Key把刚才的内容黏贴进去</p>
+<p><b style="color: red">Updated in April 22nd, 2020:</b><br>现在github修改了建站的流程，建完repo以后直接deploy上去会发现一直报404，必须要去repo的setting里面把站点的<strong>默认分支</strong>和<strong>默认主题</strong>配置好，可以说是mdzz了</p>
+<h2 id="4-修改-config-yml配置"><a href="#4-修改-config-yml配置" class="headerlink" title="4. 修改_config.yml配置"></a>4. 修改_config.yml配置</h2><h3 id="4-1-通过hexo-deploy部署"><a href="#4-1-通过hexo-deploy部署" class="headerlink" title="4.1. 通过hexo deploy部署"></a>4.1. 通过hexo deploy部署</h3><p>在site config中修改deploy对应的那几行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">    type: git</span><br><span class="line">    repo: https:&#x2F;&#x2F;github.com&#x2F;YourgithubName&#x2F;YourgithubName.github.io.git</span><br><span class="line">    branch: master</span><br></pre></td></tr></table></figure></p>
+<p>需要部署时<code>hexo d</code>就推上去了，第一次推需要安装<code>hexo-deploy-git</code>，命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure></p>
+<h3 id="4-2-post加密"><a href="#4-2-post加密" class="headerlink" title="4.2. post加密"></a>4.2. post加密</h3><p><b style="color: red">Updated in April 22nd, 2020:</b><br>不建议搞，加密的那个nodejs组件会和其他的冲突</p>
+<h3 id="4-3-修改hexo主题"><a href="#4-3-修改hexo主题" class="headerlink" title="4.3. 修改hexo主题"></a>4.3. 修改hexo主题</h3><p><b style="color: red">Updated in April 22nd, 2020:</b><br>折腾来折腾去，发现最省心的还是<a href="https://github.com/theme-next/hexo-theme-next" target="_blank" rel="noopener">hexo-next</a>，其他主题基本上在一些细节上都会有各种不尽人意之处，建议不要把太多精力耗费在页面美化上，对于个人博客来说，内容才是最重要的</p>
+<p>site config中把theme改成next，theme config中提供了四种主题，个人最喜欢<code>Gemini</code></p>
+<h3 id="4-4-TEX语法支持"><a href="#4-4-TEX语法支持" class="headerlink" title="4.4. TEX语法支持"></a>4.4. TEX语法支持</h3><p>这一步最恶心，基本照着<a href="https://blog.csdn.net/crazy_scott/article/details/79293576" target="_blank" rel="noopener">下面这个链接</a>配就行，完了以后在theme config里面把mathjax的enable开关填true，最下面的cdn，到网上找到<a href="http//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">最新版本的mathjax的cdn链接</a>，填进去</p>
+<blockquote>
+<p>实际上这个链接才是最新版本的mathjax，不确定是否work：<a href="http://cdn.mathjax.org/mathjax/latest/MathJax.js" target="_blank" rel="noopener">http://cdn.mathjax.org/mathjax/latest/MathJax.js</a></p>
+</blockquote>
+<h3 id="4-5-添加本地图片"><a href="#4-5-添加本地图片" class="headerlink" title="4.5. 添加本地图片"></a>4.5. 添加本地图片</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-asset-image --save</span><br></pre></td></tr></table></figure>
+<p>装完这个包以后会发现以后每次<code>hexo new post &quot;xxx&quot;</code>的时候，都会同时在<code>source/_post/</code>路径下生成一个同名的文件夹，可以把图片扔进去，文章里引用图片大概两种方式：</p>
 <ul>
-<li><a href="https://www.jianshu.com/p/68e6f82d88b7" target="_blank" rel="noopener">https://www.jianshu.com/p/68e6f82d88b7</a> </li>
-<li><a href="https://blog.csdn.net/crazy_scott/article/details/79293576" target="_blank" rel="noopener">https://blog.csdn.net/crazy_scott/article/details/79293576</a></li>
-<li><a href="https://blog.csdn.net/u014792304/article/details/78687859" target="_blank" rel="noopener">https://blog.csdn.net/u014792304/article/details/78687859</a></li>
+<li>markdown方式：<code>![](./image-name.prefix)</code></li>
+<li>html方式：<code>&lt;img src=&quot;./image-name.prefix&quot; ...&gt;</code></li>
 </ul>
-<p>Trouble shooting:</p>
-<ul>
-<li>不能用默认的landscape主题，landscape对mathjax的支持很差</li>
-<li>使用第三方主题时，注意第三方主题中的<code>_config.yml</code>文件中<code>mathjax</code>选项的配置<ul>
-<li>mathjax: true # 在第三方theme的_config.yml中配置</li>
-<li>mathjax: enable # 在根目录下的_config.yml中配置</li>
-<li>per_page: false # false的时候需要在markdown中手动添加mathjax: true来启动mathjax</li>
-</ul>
-</li>
-</ul>
-<p>问题测试样例（如果看到这个公式显示异常的话就需要调整.yml文件）:</p>
-<script type="math/tex; mode=display">\eta_*^\lambda=\sum_{i=0}^{T}D_{t_{e}^{s}}tk</script><h3 id="5-添加pdf文件"><a href="#5-添加pdf文件" class="headerlink" title="5. 添加pdf文件"></a>5. 添加pdf文件</h3><ul>
-<li>在博客bash中执行  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install --save hexo-pdf</span><br></pre></td></tr></table></figure></li>
-<li>在根目录下的_config.yml文件中设置<code>post_asset_folder</code>为<code>true</code></li>
-<li>在markdown中需要用到pdf文件的地方加上<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% pdf http://some_url.com/some_pdf.pdf %&#125;</span><br></pre></td></tr></table></figure></li>
-<li>在blog的source/_post路径下新建一个文件夹，<span style="color:red"><b>名字与引用pdf的markdown文件名相同</b></span>，放入要上传的pdf文件</li>
-<li><code>hexo deploy</code>的时候会自动上传文件夹</li>
-</ul>
-<h2 id="6-修改NexT主题配置"><a href="#6-修改NexT主题配置" class="headerlink" title="6. 修改NexT主题配置"></a>6. 修改NexT主题配置</h2><ul>
+<p>后者可以比前者起到更好的控制图片格式的效果，注意无论哪种方式，<strong>引用的时候都无需在写文件夹的名字</strong></p>
+<p>此外，next主题下，无论我如何在markdown里面写html，都无法做到让图片并排显示，怀疑是css里面直接覆盖了我写的html，<b style="color: red">I hereby advice against all readers to try similar things. It’s a waste of time</b>.</p>
+<h2 id="4-6-修改NexT主题配置"><a href="#4-6-修改NexT主题配置" class="headerlink" title="4.6. 修改NexT主题配置"></a>4.6. 修改NexT主题配置</h2><ul>
 <li>调整默认字体、字体大小与背景颜色等设定，定位到文件 <code>./newblog/themes/next/source/css/_variables/base.styl</code></li>
-<li>修改代码块主题，找到<code>./themes/next/_config.yml</code>中的Code Highlight Theme，有下面四种可选项，个人经斟酌选择用night bright，并将selection调整为orange<ul>
-<li>normal</li>
-<li>night</li>
-<li>night eighties</li>
-<li>night blue</li>
-<li>night bright</li>
+<li>修改代码块主题，找到<code>./themes/next/_config.yml</code>中的Code Highlight Theme，有下面四种可选项，我个人比较喜欢<code>night bright</code>，下面有个<code>mac</code>的选项打开，复制按钮和复制提示都打开，舒服</li>
 </ul>
-</li>
-</ul>
-<h2 id="7-让博客被Baidu-or-Google-收录"><a href="#7-让博客被Baidu-or-Google-收录" class="headerlink" title="7. 让博客被Baidu or Google 收录"></a>7. 让博客被Baidu or Google 收录</h2><h2 id="7-Hello-world-HEXO"><a href="#7-Hello-world-HEXO" class="headerlink" title="7. Hello world HEXO"></a>7. Hello world HEXO</h2><p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<p><b style="color: red">Updated in April 22nd, 2020:</b><br>新版的next不知为何把selection选项给去掉了，只好直接去改他的css文件，<code>grep</code>一下就可以找到css文件的目录位置在：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/******</span></span><br><span class="line"><span class="comment">CSS Directory: ./themes/next/source/css/_common/scaffolding/highlight/highlight.styl</span></span><br><span class="line"><span class="comment"> ******/</span></span><br><span class="line"><span class="selector-class">.highlight</span> &#123;</span><br><span class="line">  @extend $code-block;</span><br><span class="line"></span><br><span class="line">  *<span class="selector-pseudo">::selection</span> &#123;</span><br><span class="line">    //background: $highlight-selection;</span><br><span class="line">    background: $orange;</span><br><span class="line">  &#125;</span><br><span class="line">  // ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里我把selection改成了orange，因为next主题下默认的selection颜色是黑色，night bright本来的背景色就接近黑色了，会导致代码框里selection看不清</p>
+<p>另外next默认的<code>blockquote</code>也很丑，grep一下很容易找到css文件的位置，改成我比较喜欢的配色：<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/******</span></span><br><span class="line"><span class="comment">CSS Directory: ./themes/next/source/css/_common/scaffolding/base.styl</span></span><br><span class="line"><span class="comment"> ******/</span></span><br><span class="line"><span class="selector-tag">blockquote</span> &#123;</span><br><span class="line">  <span class="attribute">border-left</span>: <span class="number">6px</span> solid <span class="number">#78C0A8</span>;</span><br><span class="line">  <span class="attribute">color</span>: <span class="number">#555555</span>;</span><br><span class="line">  <span class="attribute">background</span>: <span class="number">#EDEDED</span>;</span><br><span class="line">  <span class="attribute">margin</span>: <span class="number">0</span>;</span><br><span class="line">  <span class="attribute">padding</span>: <span class="number">0</span> <span class="number">15px</span>;</span><br><span class="line"></span><br><span class="line">  <span class="attribute">cite</span>::before &#123;</span><br><span class="line">    content: <span class="string">'-'</span>;</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">0</span> <span class="number">5px</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>剩下的基本都比较简单，在theme config里可以直接改，比如我把超链接的<code>hovered</code>改成了orange</p>
+<h3 id="4-7-加宠物狗"><a href="#4-7-加宠物狗" class="headerlink" title="4.7. 加宠物狗"></a>4.7. 加宠物狗</h3><blockquote>
+<p><b style="color: red">WARNING</b>：使用live2d插件会显著提高内存消耗，在apple的设备上，来回切换网页窗口时safari会为了节省内存重新加载网页，强烈不建议打开live2d的mobile选项</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install --save hexo-helper-live2d</span><br></pre></td></tr></table></figure>
+<p>接下来的步骤参考<a href="https://github.com/EYHN/hexo-helper-live2d" target="_blank" rel="noopener">live2dw的官网文档</a>或者<a href="https://easyhexo.com/3-Plugins-use-and-config/3-3-hexo-helper-live2d/#%E4%BD%BF%E7%94%A8" target="_blank" rel="noopener">第三方博客</a>即可</p>
+<h2 id="Hello-world-HEXO"><a href="#Hello-world-HEXO" class="headerlink" title="Hello world HEXO"></a>Hello world HEXO</h2><p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
 <h3 id="1-Create-a-new-post"><a href="#1-Create-a-new-post" class="headerlink" title="1. Create a new post"></a>1. Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
 <p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
 <h3 id="2-Run-server"><a href="#2-Run-server" class="headerlink" title="2. Run server"></a>2. Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
@@ -422,7 +414,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-安装nodejs"><span class="nav-number">1.</span> <span class="nav-text">1. 安装nodejs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-安装hexo"><span class="nav-number">2.</span> <span class="nav-text">2. 安装hexo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-创建github-io"><span class="nav-number">3.</span> <span class="nav-text">3. 创建github.io</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-修改-config-yml配置"><span class="nav-number">4.</span> <span class="nav-text">4. 修改_config.yml配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-通过hexo-deploy部署"><span class="nav-number">4.1.</span> <span class="nav-text">1. 通过hexo deploy部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-post加密"><span class="nav-number">4.2.</span> <span class="nav-text">2. post加密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-修改hexo主题"><span class="nav-number">4.3.</span> <span class="nav-text">3. 修改hexo主题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-TEX语法支持"><span class="nav-number">4.4.</span> <span class="nav-text">4. TEX语法支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-添加pdf文件"><span class="nav-number">4.5.</span> <span class="nav-text">5. 添加pdf文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-修改NexT主题配置"><span class="nav-number">5.</span> <span class="nav-text">6. 修改NexT主题配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-让博客被Baidu-or-Google-收录"><span class="nav-number">6.</span> <span class="nav-text">7. 让博客被Baidu or Google 收录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Hello-world-HEXO"><span class="nav-number">7.</span> <span class="nav-text">7. Hello world HEXO</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Create-a-new-post"><span class="nav-number">7.1.</span> <span class="nav-text">1. Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Run-server"><span class="nav-number">7.2.</span> <span class="nav-text">2. Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Generate-static-files"><span class="nav-number">7.3.</span> <span class="nav-text">3. Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Deploy-to-remote-sites"><span class="nav-number">7.4.</span> <span class="nav-text">4. Deploy to remote sites</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-安装nodejs"><span class="nav-number">1.</span> <span class="nav-text">1. 安装nodejs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-安装hexo"><span class="nav-number">2.</span> <span class="nav-text">2. 安装hexo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-创建github-io"><span class="nav-number">3.</span> <span class="nav-text">3. 创建github.io</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-修改-config-yml配置"><span class="nav-number">4.</span> <span class="nav-text">4. 修改_config.yml配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-通过hexo-deploy部署"><span class="nav-number">4.1.</span> <span class="nav-text">4.1. 通过hexo deploy部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-post加密"><span class="nav-number">4.2.</span> <span class="nav-text">4.2. post加密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-修改hexo主题"><span class="nav-number">4.3.</span> <span class="nav-text">4.3. 修改hexo主题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-TEX语法支持"><span class="nav-number">4.4.</span> <span class="nav-text">4.4. TEX语法支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-添加本地图片"><span class="nav-number">4.5.</span> <span class="nav-text">4.5. 添加本地图片</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-6-修改NexT主题配置"><span class="nav-number">5.</span> <span class="nav-text">4.6. 修改NexT主题配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-加宠物狗"><span class="nav-number">5.1.</span> <span class="nav-text">4.7. 加宠物狗</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hello-world-HEXO"><span class="nav-number">6.</span> <span class="nav-text">Hello world HEXO</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Create-a-new-post"><span class="nav-number">6.1.</span> <span class="nav-text">1. Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Run-server"><span class="nav-number">6.2.</span> <span class="nav-text">2. Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Generate-static-files"><span class="nav-number">6.3.</span> <span class="nav-text">3. Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Deploy-to-remote-sites"><span class="nav-number">6.4.</span> <span class="nav-text">4. Deploy to remote sites</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

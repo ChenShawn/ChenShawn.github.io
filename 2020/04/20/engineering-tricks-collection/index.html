@@ -28,9 +28,10 @@
 <meta property="og:description" content="各种machine learning工程上会遇到的问题及解决方案收集">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://yoursite.com/2020/04/20/engineering-tricks-collection/focal-1.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/20/engineering-tricks-collection/beam-search.png">
 <meta property="og:image" content="http://yoursite.com/2020/04/20/engineering-tricks-collection/horovod-1.png">
 <meta property="article:published_time" content="2020-04-20T07:26:04.000Z">
-<meta property="article:modified_time" content="2020-04-21T10:24:31.104Z">
+<meta property="article:modified_time" content="2020-04-26T07:45:22.712Z">
 <meta property="article:author" content="Chen Shawn">
 <meta property="article:tag" content="Resource collection">
 <meta name="twitter:card" content="summary">
@@ -235,7 +236,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-04-21 18:24:31" itemprop="dateModified" datetime="2020-04-21T18:24:31+08:00">2020-04-21</time>
+                <time title="Modified: 2020-04-26 15:45:22" itemprop="dateModified" datetime="2020-04-26T15:45:22+08:00">2020-04-26</time>
               </span>
 
           
@@ -260,11 +261,12 @@
 <a id="more"></a>
 <p>提纲</p>
 <ul>
-<li>正负样本不均衡：Focal loss</li>
-<li>时序数据/NLP文本数据</li>
-<li>多机多卡分布式训练</li>
+<li><a href="#1-Focal-loss">正负样本不均衡：Focal loss</a></li>
+<li><a href="#2-Sequential-data-processing">时序数据/NLP文本数据</a></li>
+<li><a href="#3-Distributed-Training-with-horovod">多机多卡分布式训练</a></li>
+<li>模型部署</li>
 </ul>
-<h2 id="1-Focal-loss"><a href="#1-Focal-loss" class="headerlink" title="1. Focal loss"></a>1. Focal loss</h2><p>出自CVPR 2017何凯明大佬的<a href="https://arxiv.org/abs/1708.02002" target="_blank" rel="noopener">Focal Loss for Dense Object Detection</a>，虽然原论文是做object detection任务的，但由于其适用性极强效果也很好，被广泛应用在包括NLP/推荐等各种领域中</p>
+<h2 id="1-Focal-loss"><a href="#1-Focal-loss" class="headerlink" title="1. Focal loss"></a>1. Focal loss</h2><h3 id="1-1-原理"><a href="#1-1-原理" class="headerlink" title="1.1 原理"></a>1.1 原理</h3><p>出自CVPR 2017何凯明大佬的<a href="https://arxiv.org/abs/1708.02002" target="_blank" rel="noopener">Focal Loss for Dense Object Detection</a>，虽然原论文是做object detection任务的，但由于其适用性极强效果也很好，被广泛应用在包括NLP/推荐等各种领域中</p>
 <p><img src="./focal-1.png" alt=""></p>
 <p>何凯明大佬认为object detection数据集中各类之间的正负样本数量是不均衡的，在梯度反向传播的过程中，正样本提供的有效梯度信息会被淹没在大量无意义的负样本中，focal loss可以定义为</p>
 <script type="math/tex; mode=display">FL(p)=-\alpha_{t}(1-p_{t})^{\gamma}\log{p_{t}}</script><p>直观上理解，一般如果是用交叉熵损失的话，负样本比例越大，模型越会倾向于输出接近0的概率值，而数据集中的负样本比例越多，则整体focal loss的数值也就越大；focal loss可以放大hard positive samples，而negative samples的损失会被衰减</p>
@@ -273,15 +275,42 @@
 <li>如何理解$\alpha$：论文里被称作weighting factor，其实给正负样本的loss分别加权重应该是一个很容易想到的idea，以前也确实有很多人这样做过，仅仅对正负样本乘以不同weight的方法在这种文章中作为对比的baseline</li>
 </ul>
 <p>实验结果表明，在object detection任务上效果最好的超参组合是$\gamma=2, \alpha=0.25$，一般其他任务会设置$\alpha=0.5$</p>
-<p>tf2.x时代的代码实现见<a href="https://github.com/tensorflow/addons/blob/v0.7.1/tensorflow_addons/losses/focal_loss.py#L100-L151" target="_blank" rel="noopener">tf-addon的github代码库</a>，写的还是挺清爽的，可以直接copy过来用</p>
-<h2 id="2-Sequential-data-processing"><a href="#2-Sequential-data-processing" class="headerlink" title="2. Sequential data processing"></a>2. Sequential data processing</h2><p><strong>Everyone knows the facts:</strong> Sequential data最常见的是自然语言和时间序列，DL时代一般处理sequential data的常规工具包括LSTM与GRU，GRU可以看做是LSTM的简化版本，现有实验研究的数据表明绝大多数LSTM与GRU的效果是差不多的</p>
+<p>tf2.x时代的代码实现见<a href="https://github.com/tensorflow/addons/blob/v0.7.1/tensorflow_addons/losses/focal_loss.py#L100-L151" target="_blank" rel="noopener">tf-addon的github代码库</a>，写的还是挺清爽的，可以直接copy过来用，几个小的地方稍微改动下即可</p>
+<h3 id="1-2-实验结果"><a href="#1-2-实验结果" class="headerlink" title="1.2. 实验结果"></a>1.2. 实验结果</h3><p>在<del>这个数据不能讲上</del>跑了一波实验，数据集中negative占比83%左右，总共跑了4组参数对比</p>
+<ul>
+<li><strong>Baseline:</strong> cross entropy loss</li>
+<li><strong>Focal A:</strong> $\alpha=0.5, \gamma=2.0$</li>
+<li><strong>Focal B:</strong> $\alpha=0.8, \gamma=2.0$</li>
+<li><strong>Focal C:</strong> $\alpha=0.8, \gamma=4.0$</li>
+</ul>
+<p>同时观测测试集上的ACC、AUC、recall以及precision几个指标，决策边界与其他超参数全部采用<code>tf.keras</code>给定的默认值，每2000步在测试集上evaluate一次，计算各个评价指标的running average，现象总结如下：</p>
+<ul>
+<li>Baseline的recall和precision都是最低的，AUC可以达到接近其他组的结果</li>
+<li>Focal A的precision最高，Focal BC两组的recall相比A明显提升，但precision和AUC有所下降</li>
+<li>Focal C组的recall是四组实验中最高的，同时AUC也是四组中最低的</li>
+</ul>
+<p>在负样本远多于正样本的情况下，得到以下几个结论：</p>
+<ul>
+<li>相比传统的交叉熵损失，focal可以同时提升recall和precision，这说明focal确实有助于模型对hard positive的训练</li>
+<li>提升gamma和alpha都可以提升模型的recall，但也同时会降低模型的precision，过大的gamma参数会降低模型的AUC</li>
+<li>四组实验综合来看，$\gamma=2.0, \alpha=0.8$的参数组合可以较好地平衡各个评价指标</li>
+</ul>
+<h2 id="2-Sequential-data-processing"><a href="#2-Sequential-data-processing" class="headerlink" title="2. Sequential data processing"></a>2. Sequential data processing</h2><p><strong>Everyone knows the facts:</strong> Sequential data最常见的是自然语言和时间序列，DL时代一般处理sequential data的常规工具包括LSTM与GRU，GRU可以看做是LSTM的简化版本，现有实验研究的数据表明绝大多数LSTM与GRU的效果差不多</p>
+<h3 id="2-1-seq2seq"><a href="#2-1-seq2seq" class="headerlink" title="2.1. seq2seq"></a>2.1. seq2seq</h3><p><b style="color:red">techical detail 1: beam search</b></p>
+<p>在一个基于RNN的seq2seq的任务中，比如NMT，RNN输出的是一组单词的概率值 $p(y_1|x), p(y_2|y_{1}, x), …, p(y_n, y_{1}, …, y_{n-1}, x)$，我们希望得到一组$y_1, …, y_n$使得$\prod_{i}p(y_{i}|y_{1},…,y_{i-1},x)$最大，i.e.,</p>
+<script type="math/tex; mode=display">
+\max_{y_{1},y_{2},...,y_{n}}\sum_{i}\log{p(y_{i}|y_{1}, ..., y_{i-1}, x)}</script><p>这个maximization肯定是不能用greedy方法解的；vocabulary有可能很大，那么遍历后剪枝的方法也不太可行；目前NLP里的通用做法是beam search，which is a type of heuristic search that doesn’t guarantee to find the optimal.</p>
+<p>Core idea: on each step of the decoder, keep track of the K-most probable transitions</p>
+<p><img src="./beam-search.png" alt=""></p>
+<p><b style="color:red">techincal detail 2: attention implementation</b></p>
+<hr>
 <h2 id="3-Distributed-Training-with-horovod"><a href="#3-Distributed-Training-with-horovod" class="headerlink" title="3. Distributed Training with horovod"></a>3. Distributed Training with horovod</h2><h3 id="3-1-Introduction"><a href="#3-1-Introduction" class="headerlink" title="3.1. Introduction"></a>3.1. Introduction</h3><p>horovod是uber发布的一个分布式深度学习训练框架（<a href="https://github.com/horovod/horovod" target="_blank" rel="noopener">github repository link here!</a>），其motivation来源于两篇文章：</p>
 <ul>
 <li>Facebook: <a href="https://research.fb.com/wp-content/uploads/2017/06/imagenet1kin1h5.pdf" target="_blank" rel="noopener">Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour</a>，主要思路是多GPU输入不同的数据batch，各个GPU梯度求平均，最后broadcast到各个GPU显存中更新模型参数</li>
 <li>Baidu: <a href="https://andrew.gibiansky.com/blog/machine-learning/baidu-allreduce/" target="_blank" rel="noopener">Bringing HPC Techniques to Deep Learning</a>，这篇文章重点考虑了多机多卡之间broadcast梯度的方式，即后来大名鼎鼎的ring-allreduce，后来ByteDance AILab貌似也是对broadcasting这一点做了一些改进</li>
 </ul>
 <blockquote>
-<p>插两句废话，其实horovod不算是什么新技术，遥想本渣渣研二的时候还研究过一番tensorflow 1.x的分布式训练框架，当时最大的感受就是概念极其繁多，从<code>tf.Server</code>到<code>tf.train.SyncReplicasOptimizer()</code>再到<code>tf.Supervisor</code>，每一个类都会让人莫名其妙这又是什么鬼东西，作为最早将mapreduce落地应用到商业领域的公司，Google在分布式计算方面拥有领跑全球的技术不假，但他们似乎并没有兴趣仔细打磨分布式训练应用层的用户体验</p>
+<p>插两句废话，其实horovod不算是什么新技术，遥想本渣渣研二的时候还研究过一番tensorflow 1.x的分布式训练框架，当时最大的感受就是概念极其繁多，从<code>tf.Server</code>到<code>tf.train.SyncReplicasOptimizer</code>再到<code>tf.Supervisor</code>，每一个类都会让人莫名其妙这又是什么鬼东西，作为最早将mapreduce落地应用到商业领域的公司，Google在分布式计算方面拥有领跑全球的技术不假，但他们似乎并没有兴趣仔细打磨分布式训练应用层的用户体验</p>
 </blockquote>
 <p><img src="./horovod-1.png" alt="horovod性能benchmark"></p>
 <p>horovod的官方文档还是比较友好的：</p>
@@ -303,7 +332,7 @@
 <p>四台机器，每台机器四张卡</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># The following two ways are equivalent</span></span><br><span class="line">horovodrun -np 16 -H server1:4,server2:4,server3:4,server4:4 python train.py</span><br><span class="line"></span><br><span class="line">mpirun -np 16 \</span><br><span class="line">    -H server1:4,server2:4,server3:4,server4:4 \</span><br><span class="line">    -<span class="built_in">bind</span>-to none -map-by slot \</span><br><span class="line">    -x NCCL_DEBUG=INFO -x LD_LIBRARY_PATH -x PATH \</span><br><span class="line">    -mca pml ob1 -mca btl ^openib \</span><br><span class="line">    python train.py</span><br></pre></td></tr></table></figure>
 <p><b style="color: red">NOTE:</b> <code>${server}:${num_gpus}</code> 这里填ip地址和对应那台机器上的GPU数量，更详细的参数设置见上面的链接</p>
-
+<h2 id="4-Model-Deployment"><a href="#4-Model-Deployment" class="headerlink" title="4. Model Deployment"></a>4. Model Deployment</h2><h3 id="4-1-tensorflow"><a href="#4-1-tensorflow" class="headerlink" title="4.1. tensorflow"></a>4.1. tensorflow</h3>
     </div>
 
     
@@ -400,7 +429,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Focal-loss"><span class="nav-number">1.</span> <span class="nav-text">1. Focal loss</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Sequential-data-processing"><span class="nav-number">2.</span> <span class="nav-text">2. Sequential data processing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Distributed-Training-with-horovod"><span class="nav-number">3.</span> <span class="nav-text">3. Distributed Training with horovod</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Introduction"><span class="nav-number">3.1.</span> <span class="nav-text">3.1. Introduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-tf-2-x-hvd应用案例"><span class="nav-number">3.2.</span> <span class="nav-text">3.2. tf-2.x+hvd应用案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-运行"><span class="nav-number">3.3.</span> <span class="nav-text">3.3. 运行</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Focal-loss"><span class="nav-number">1.</span> <span class="nav-text">1. Focal loss</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-原理"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-实验结果"><span class="nav-number">1.2.</span> <span class="nav-text">1.2. 实验结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Sequential-data-processing"><span class="nav-number">2.</span> <span class="nav-text">2. Sequential data processing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-seq2seq"><span class="nav-number">2.1.</span> <span class="nav-text">2.1. seq2seq</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Distributed-Training-with-horovod"><span class="nav-number">3.</span> <span class="nav-text">3. Distributed Training with horovod</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Introduction"><span class="nav-number">3.1.</span> <span class="nav-text">3.1. Introduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-tf-2-x-hvd应用案例"><span class="nav-number">3.2.</span> <span class="nav-text">3.2. tf-2.x+hvd应用案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-运行"><span class="nav-number">3.3.</span> <span class="nav-text">3.3. 运行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Model-Deployment"><span class="nav-number">4.</span> <span class="nav-text">4. Model Deployment</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-tensorflow"><span class="nav-number">4.1.</span> <span class="nav-text">4.1. tensorflow</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -592,7 +621,7 @@
     };
     (function () {
       var script = document.createElement('script');
-      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.src = 'http//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
       script.defer = true;
       document.head.appendChild(script);
     })();
