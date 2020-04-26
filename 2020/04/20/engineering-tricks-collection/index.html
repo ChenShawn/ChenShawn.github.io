@@ -31,7 +31,7 @@
 <meta property="og:image" content="http://yoursite.com/2020/04/20/engineering-tricks-collection/beam-search.png">
 <meta property="og:image" content="http://yoursite.com/2020/04/20/engineering-tricks-collection/horovod-1.png">
 <meta property="article:published_time" content="2020-04-20T07:26:04.000Z">
-<meta property="article:modified_time" content="2020-04-26T07:45:22.712Z">
+<meta property="article:modified_time" content="2020-04-26T09:32:34.224Z">
 <meta property="article:author" content="Chen Shawn">
 <meta property="article:tag" content="Resource collection">
 <meta name="twitter:card" content="summary">
@@ -236,7 +236,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-04-26 15:45:22" itemprop="dateModified" datetime="2020-04-26T15:45:22+08:00">2020-04-26</time>
+                <time title="Modified: 2020-04-26 17:32:34" itemprop="dateModified" datetime="2020-04-26T17:32:34+08:00">2020-04-26</time>
               </span>
 
           
@@ -296,10 +296,21 @@
 <li>四组实验综合来看，$\gamma=2.0, \alpha=0.8$的参数组合可以较好地平衡各个评价指标</li>
 </ul>
 <h2 id="2-Sequential-data-processing"><a href="#2-Sequential-data-processing" class="headerlink" title="2. Sequential data processing"></a>2. Sequential data processing</h2><p><strong>Everyone knows the facts:</strong> Sequential data最常见的是自然语言和时间序列，DL时代一般处理sequential data的常规工具包括LSTM与GRU，GRU可以看做是LSTM的简化版本，现有实验研究的数据表明绝大多数LSTM与GRU的效果差不多</p>
-<h3 id="2-1-seq2seq"><a href="#2-1-seq2seq" class="headerlink" title="2.1. seq2seq"></a>2.1. seq2seq</h3><p><b style="color:red">techical detail 1: beam search</b></p>
-<p>在一个基于RNN的seq2seq的任务中，比如NMT，RNN输出的是一组单词的概率值 $p(y_1|x), p(y_2|y_{1}, x), …, p(y_n, y_{1}, …, y_{n-1}, x)$，我们希望得到一组$y_1, …, y_n$使得$\prod_{i}p(y_{i}|y_{1},…,y_{i-1},x)$最大，i.e.,</p>
+<h3 id="2-1-How-to-deal-with-large-vocabulary-size"><a href="#2-1-How-to-deal-with-large-vocabulary-size" class="headerlink" title="2.1. How to deal with large vocabulary size?"></a>2.1. How to deal with large vocabulary size?</h3><p>NLP任务中的vocabulary size一般都会很大，比如腾讯AILab放出来的预训练中文word embedding中总共有八百万个中文单词，类似的情况也可能会在其他的一些任务场景下遇到，在模型的输出端对整个vocabulary做softmax会带来两个问题</p>
+<ul>
+<li>softmax计算会非常耗时，绝大多数的计算都浪费在为无意义的稀疏的logits做exponential，其实可能超过99%的logits的值都不会对最后softmax小数点五位以内的结果有任何影响</li>
+<li>训练效率低，上文focal loss的应用场景中也有这个问题，正样本的有意义梯度被淹没在大量的无意义的负样本梯度中</li>
+</ul>
+<p>NLP中通用的两种解决方式：</p>
+<ul>
+<li><strong>Hierachical Softmax:</strong> 简而言之将softmax最后一层的结果建成一颗二叉树（AVL/红黑树）便于查找，但无法写成支持GPU并行计算的算子，因而实际效率仍然不高</li>
+<li><strong>Noise Contrastive Estimation:</strong> 这个trick在word2vec里也有用到，核心思想是随机采样K个负样本来近似softmax的结果，通常K远小于softmax的总大小，<a href="https://www.isi.edu/natural-language/mt/simple-fast-noise.pdf" target="_blank" rel="noopener">Soph et al, 2016</a>提出的方法可以将NCE并行化，实现为高效的GPU算子，这点要强于hierachical softmax</li>
+</ul>
+<p>两种方法的共同缺点：只能节省training中softmax的计算量，无法用于testing phase中的softmax计算</p>
+<h3 id="2-2-seq2seq"><a href="#2-2-seq2seq" class="headerlink" title="2.2. seq2seq"></a>2.2. seq2seq</h3><p><b style="color:red">techical detail 1: beam search</b></p>
+<p>NMT任务中，RNN输出的是一组单词的概率值 $p(y_1|x), p(y_2|y_{1}, x), …, p(y_n, y_{1}, …, y_{n-1}, x)$，我们希望得到一组$y_1, …, y_n$使得$\prod_{i}p(y_{i}|y_{1},…,y_{i-1},x)$最大，i.e.,</p>
 <script type="math/tex; mode=display">
-\max_{y_{1},y_{2},...,y_{n}}\sum_{i}\log{p(y_{i}|y_{1}, ..., y_{i-1}, x)}</script><p>这个maximization肯定是不能用greedy方法解的；vocabulary有可能很大，那么遍历后剪枝的方法也不太可行；目前NLP里的通用做法是beam search，which is a type of heuristic search that doesn’t guarantee to find the optimal.</p>
+\max_{y_{1},y_{2},...,y_{n}}\sum_{i}\log{p(y_{i}|y_{1}, ..., y_{i-1}, x)}</script><p>这个maximization是一个典型的NP-complete问题，目前NLP里比较通用的做法是beam search，which is a type of heuristic search that doesn’t guarantee to find the optimal.</p>
 <p>Core idea: on each step of the decoder, keep track of the K-most probable transitions</p>
 <p><img src="./beam-search.png" alt=""></p>
 <p><b style="color:red">techincal detail 2: attention implementation</b></p>
@@ -429,7 +440,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Focal-loss"><span class="nav-number">1.</span> <span class="nav-text">1. Focal loss</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-原理"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-实验结果"><span class="nav-number">1.2.</span> <span class="nav-text">1.2. 实验结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Sequential-data-processing"><span class="nav-number">2.</span> <span class="nav-text">2. Sequential data processing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-seq2seq"><span class="nav-number">2.1.</span> <span class="nav-text">2.1. seq2seq</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Distributed-Training-with-horovod"><span class="nav-number">3.</span> <span class="nav-text">3. Distributed Training with horovod</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Introduction"><span class="nav-number">3.1.</span> <span class="nav-text">3.1. Introduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-tf-2-x-hvd应用案例"><span class="nav-number">3.2.</span> <span class="nav-text">3.2. tf-2.x+hvd应用案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-运行"><span class="nav-number">3.3.</span> <span class="nav-text">3.3. 运行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Model-Deployment"><span class="nav-number">4.</span> <span class="nav-text">4. Model Deployment</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-tensorflow"><span class="nav-number">4.1.</span> <span class="nav-text">4.1. tensorflow</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Focal-loss"><span class="nav-number">1.</span> <span class="nav-text">1. Focal loss</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-原理"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-实验结果"><span class="nav-number">1.2.</span> <span class="nav-text">1.2. 实验结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Sequential-data-processing"><span class="nav-number">2.</span> <span class="nav-text">2. Sequential data processing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-How-to-deal-with-large-vocabulary-size"><span class="nav-number">2.1.</span> <span class="nav-text">2.1. How to deal with large vocabulary size?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-seq2seq"><span class="nav-number">2.2.</span> <span class="nav-text">2.2. seq2seq</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Distributed-Training-with-horovod"><span class="nav-number">3.</span> <span class="nav-text">3. Distributed Training with horovod</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Introduction"><span class="nav-number">3.1.</span> <span class="nav-text">3.1. Introduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-tf-2-x-hvd应用案例"><span class="nav-number">3.2.</span> <span class="nav-text">3.2. tf-2.x+hvd应用案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-运行"><span class="nav-number">3.3.</span> <span class="nav-text">3.3. 运行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Model-Deployment"><span class="nav-number">4.</span> <span class="nav-text">4. Model Deployment</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-tensorflow"><span class="nav-number">4.1.</span> <span class="nav-text">4.1. tensorflow</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -621,7 +632,7 @@
     };
     (function () {
       var script = document.createElement('script');
-      script.src = 'http//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
       script.defer = true;
       document.head.appendChild(script);
     })();
