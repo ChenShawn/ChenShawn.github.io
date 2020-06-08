@@ -27,11 +27,13 @@
 <meta property="og:site_name" content="Chen Shawn&#39;s Blogs">
 <meta property="og:description" content="在ubuntu 18.04上安装微信的问题">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2019/06/29/deepin-wechat/github-error.png">
 <meta property="article:published_time" content="2019-06-29T08:22:57.000Z">
-<meta property="article:modified_time" content="2020-04-18T07:53:35.590Z">
+<meta property="article:modified_time" content="2020-06-08T15:16:14.191Z">
 <meta property="article:author" content="Chen Shawn">
 <meta property="article:tag" content="Manual">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2019/06/29/deepin-wechat/github-error.png">
 
 <link rel="canonical" href="http://yoursite.com/2019/06/29/deepin-wechat/">
 
@@ -232,7 +234,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-04-18 15:53:35" itemprop="dateModified" datetime="2020-04-18T15:53:35+08:00">2020-04-18</time>
+                <time title="Modified: 2020-06-08 23:16:14" itemprop="dateModified" datetime="2020-06-08T23:16:14+08:00">2020-06-08</time>
               </span>
 
           
@@ -275,6 +277,16 @@
 <p>然后发现WPS可以正常打开了，但打开之后会弹窗warning说缺失字体，所以这里需要去<a href="https://pan.baidu.com/s/1mh0lcbY" target="_blank" rel="noopener">网上下载</a>下来WPS需要的几种字体，把压缩包单独放在某个文件夹下</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">unzip wps_symbol_fonts.zip</span><br><span class="line">sudo cp *.ttf /usr/share/fonts/</span><br><span class="line">sudo cp *.TTF /usr/share/fonts/</span><br><span class="line">sudo mkfontscale</span><br><span class="line">sudo mkfontdir</span><br><span class="line">sudo <span class="built_in">fc</span>-cache</span><br></pre></td></tr></table></figure>
 <p>再打开WPS发现不在弹窗，问题解决</p>
+<h2 id="github图片无法显示"><a href="#github图片无法显示" class="headerlink" title="github图片无法显示"></a>github图片无法显示</h2><p>问题显示样例</p>
+<p><img src="./github-error.png" alt=""></p>
+<p>这个问题是由于github更新DNS源导致的，解决方案也是更新DNS源即可，网上有很多教windows如何更新DNS源的资料，ubuntu的文件位置不太一样</p>
+<p>定位到<code>/etc/resolv.conf</code>，文件末尾有nameserver的配置选项</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># nameserver 114.114.114.114</span><br><span class="line">nameserver 127.0.0.53</span><br><span class="line"># nameserver 8.8.8.8</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>127.0.0.53:</strong> 貌似是个无意义的地址，默认nameserver为此选项，应该是为了避免每次进行DNS解析而定的</li>
+<li><strong>8.8.8.8:</strong> Google提供的nameserver，试了下换掉以后肉眼可见网速变慢，但可以解决github图片不可显示问题</li>
+<li><strong>114.114.114.114:</strong> 中国移动提供的nameserver，换上以后也能解决github图片不可显示问题，且不会显著降低网速</li>
+</ul>
 
     </div>
 
@@ -375,7 +387,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#在ubuntu-18-04上安装微信的问题"><span class="nav-number">1.</span> <span class="nav-text">在ubuntu 18.04上安装微信的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在Ubuntu18-04上安装WPS-office的问题"><span class="nav-number">2.</span> <span class="nav-text">在Ubuntu18.04上安装WPS office的问题</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#在ubuntu-18-04上安装微信的问题"><span class="nav-number">1.</span> <span class="nav-text">在ubuntu 18.04上安装微信的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在Ubuntu18-04上安装WPS-office的问题"><span class="nav-number">2.</span> <span class="nav-text">在Ubuntu18.04上安装WPS office的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#github图片无法显示"><span class="nav-number">3.</span> <span class="nav-text">github图片无法显示</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
