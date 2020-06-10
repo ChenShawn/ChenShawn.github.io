@@ -31,7 +31,7 @@
 <meta property="og:image" content="http://yoursite.com/2020/04/20/engineering-tricks-collection/beam-search.png">
 <meta property="og:image" content="http://yoursite.com/2020/04/20/engineering-tricks-collection/horovod-1.png">
 <meta property="article:published_time" content="2020-04-20T07:26:04.000Z">
-<meta property="article:modified_time" content="2020-04-28T13:05:39.300Z">
+<meta property="article:modified_time" content="2020-06-10T07:48:12.997Z">
 <meta property="article:author" content="Chen Shawn">
 <meta property="article:tag" content="Resource collection">
 <meta name="twitter:card" content="summary">
@@ -236,7 +236,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-04-28 21:05:39" itemprop="dateModified" datetime="2020-04-28T21:05:39+08:00">2020-04-28</time>
+                <time title="Modified: 2020-06-10 15:48:12" itemprop="dateModified" datetime="2020-06-10T15:48:12+08:00">2020-06-10</time>
               </span>
 
           
@@ -353,6 +353,8 @@
 <p>注意tensorflow的serving是可以支持热更新模型的，只要在模型目录下更新版本号即可即可，例如原来的路径是<code>${basedir}/saved-model/</code>，该路径下建立文件夹<code>${version_number_int}</code>来存放pb文件，每次模型更新可以直接将模型放到文件夹下</p>
 <p><code>tensorflow-model-server</code>的参数说明见blog链接<a href="https://blog.51cto.com/aaronsa/2284396" target="_blank" rel="noopener">https://blog.51cto.com/aaronsa/2284396</a>，有一点需要注意的是，如果server服务启动使用了参数<code>--port</code>，那么该服务会只接受grpc请求，而使用<code>--rest_api_port</code>的端口可以通过HTTP请求访问</p>
 <h3 id="4-3-ncnn"><a href="#4-3-ncnn" class="headerlink" title="4.3. ncnn"></a>4.3. ncnn</h3><p>ncnn是本渣渣在公司期间用得最多的库，一言以蔽之，ncnn是一个轻量级的神经网络<strong>前向</strong>部署框架，只能用于前向传播计算，优点是在在移动端设备上benchmark性能明显高于其他baseline，缺点是支持的op数量较少，从全民pytorch或tf-2.x的2020年看来有点落后于时代</p>
+<p><b color="red">Update in June 10th, 2020:</b> 之前在公司用过的<a href="https://github.com/Tencent/TNN" target="_blank" rel="noopener">升级版ncnn已经在github开源</a>，现在的名字叫做TNN，看起来是腾讯优图那边的成果</p>
+<p>好不好用等之后尝过鲜之后再做更新吧。。。</p>
 <h3 id="4-4-libtensorflow"><a href="#4-4-libtensorflow" class="headerlink" title="4.4. libtensorflow"></a>4.4. libtensorflow</h3><p><strong>NOTE:</strong> TensorFlow 2 尚不支持 libtensorflow，预计会在未来版本中提供相应支持。</p>
 
     </div>
