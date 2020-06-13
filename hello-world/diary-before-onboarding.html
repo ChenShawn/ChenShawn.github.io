@@ -31,9 +31,15 @@
 <meta property="og:image" content="http://yoursite.com/hello-world/diary-before-onboarding/dongshan-1.jpg">
 <meta property="og:image" content="http://yoursite.com/hello-world/diary-before-onboarding/dongshan-2.jpg">
 <meta property="og:image" content="http://yoursite.com/hello-world/diary-before-onboarding/dongshan-3.jpg">
+<meta property="og:image" content="http://yoursite.com/hello-world/diary-before-onboarding/aaai-1.jpg">
+<meta property="og:image" content="http://yoursite.com/hello-world/diary-before-onboarding/aaai-2.jpg">
+<meta property="og:image" content="http://himg2.huanqiu.com/attachment2010/2012/0524/20120524023844106.jpg">
 <meta property="og:image" content="https://img1.doubanio.com/view/group_topic/l/public/p172809119.webp">
+<meta property="og:image" content="http://yoursite.com/hello-world/diary-before-onboarding/guangyu-1.jpg">
+<meta property="og:image" content="http://yoursite.com/hello-world/diary-before-onboarding/guangyu-2.jpg">
+<meta property="og:image" content="https://bkimg.cdn.bcebos.com/pic/4e4a20a4462309f72772e41b7b0e0cf3d7cad69e">
 <meta property="article:published_time" content="2020-04-20T07:26:04.000Z">
-<meta property="article:modified_time" content="2020-06-10T12:59:27.668Z">
+<meta property="article:modified_time" content="2020-06-13T09:54:33.414Z">
 <meta property="article:author" content="Chen Shawn">
 <meta property="article:tag" content="Messing around">
 <meta name="twitter:card" content="summary">
@@ -236,18 +242,41 @@
 <p>一月初，帮PKU董老师的书做external reviewer，这本书最近已经通过Springer出版，并将在今年的ICML会议上发售，作为从未参加过ICML的人，还是非常感激去年一段时间在公司的历练，让我有机会走出自己的舒适区，参与一些足够有趣的工作中。</p>
 <p>一月初和六月初先后几次搞了些赚钱的副业，quite fortunately这些副业并非止于铜臭味的交易，反而让我学习/温习了不少东西，让自己保持mentally alert to comfort zone overfitting。</p>
 <p>三月初接到一个不知名journal的paper-review request，本来由于方向不完全对口没有很想接，后来和师弟聊了下，他比较感兴趣，干脆接下来用心读了两遍，又和师弟讨论了几次后写了长长的feedback。</p>
-<p>去年回到学校以后，有感于在公司实习时用到的分布式RL系统的精妙与复杂，想要自己实现一个原理相同但更相对简单的版本，一直苦于没有时间；三月中旬的一天由于大论文实验受挫，学了一下午Linux C编程后开始动手写<a href="https://github.com/ChenShawn/webserver-based-parallel-rl-training" target="_blank" rel="noopener">这个简化版的分布式RL项目</a>；这个项目大概是我自己搞过的难度最高的项目了：一开始用Flask做server，用pb通讯，外加互斥锁同步完成了最初的版本，在服务器上开8-16进程实测GPU利用率非常低；分析了若干问题后重开分支把Flask换成了brpc，把互斥锁换成了C++ STL里的<code>stomic_int</code>，之后写到一半不知道lock-free怎么解决读写同步问题，于是该项目被长期搁置。想想自己一时兴起搞得东西，如果初始期望值太高，遇到困难后得不到外部激励，结果大都如此。</p>
+<p>去年回到学校以后，有感于在公司实习时用到的分布式RL系统的精妙与复杂，想要自己实现一个原理相同但更相对简单的版本，一直苦于没有时间；三月中旬的一天由于大论文实验受挫，学了一下午Linux C编程后开始动手写<a href="https://github.com/ChenShawn/webserver-based-parallel-rl-training" target="_blank" rel="noopener">这个简化版的分布式RL项目</a>；这个项目大概是我自己搞过的难度最高的项目了：一开始用Flask做server，用pb通讯，外加互斥锁同步完成了最初的版本，在服务器上开8-16进程实测GPU利用率非常低；分析了若干问题后重开分支把Flask换成了brpc，把互斥锁换成了C++ STL里的<code>atomic_int</code>，之后写到一半不知道lock-free怎么解决读写同步问题，于是该项目被长期搁置。想想自己一时兴起搞得东西，如果初始期望值太高，遇到困难后得不到外部激励，结果大都如此。</p>
 <p>半年的时间里，磨磨蹭蹭地学完了Stanford的<code>CS224n</code>与MIT的<code>CS 6.824</code>。说来惭愧，直到快毕业了还在学这些本该是本科大三大四年级的人该学的课，一定程度上是因为我一开始的盲目与短视，认为我做CV或RL，那就只需要学CV或者RL的东西就好了。在工作中频繁遇到自己不懂的领域常识后，我慢慢意识到这种思维如坐井观天，在企业里做算法研究，首先要对整个ML community有一个高屋建瓴的把握，其次要熟悉算法用于大规模场景时的边界问题。前者需要知识广泛地覆盖ML的各个子领域，至少要能做到出去开会和别的领域的人一起吹牛逼不会露馅的那种程度；后者就会经常碰到distributed system的各种问题。我也是学了<code>CS 6.824</code>之后，才开始慢慢理解在百度实习时做的东西的大致原理，分布式架构着实是一个十分inspiring的领域。</p>
 <p>四月份，基于<code>tushare</code>做了一个<a href="https://github.com/ChenShawn/stock-market-research" target="_blank" rel="noopener">小的深度学习量化选股项目</a>，整体项目包含数据下载、特征工程、模型训练，线上选股以及 <em>（小规模）</em> 回测等内容，模型实验包括普通LSTM、GRU、不同版本的Attention以及seq2seq，最终发现越复杂的模型效果越差，且代码量远大于我一开始的预期，绝大多数的代码都是各种数据特征处理或格式转换，最近女票还会经常让我更新这个repo里的选股结果，算是写了个有点实际用场的小东西。</p>
 <p>五一期间跑了一趟女票老家，顺便去逛了莆田的动物园和漳州的东山岛，最后事实证明，东山岛这个名气不大的小岛美景却远超期望，可惜去的时间太短未能尽兴。</p>
 <blockquote>
 <p>这条路貌似是左耳的拍摄地之一，一派民居毗邻海边，颇有文艺情怀<br><img src="./diary-before-onboarding/dongshan-1.jpg" alt=""><br>东山的老房子大都依山而建，爬到山顶向下看有点摩洛哥的感觉，我们登顶时恰逢落日，美不胜收<br><img src="./diary-before-onboarding/dongshan-2.jpg" alt=""><br>这里的海非常蓝且比较干净，在国内的海滨实属难得，这篇角落停了不少帆船，对比了一下之前去黑山的照片，也有点异曲同工的感觉<br><img src="./diary-before-onboarding/dongshan-3.jpg" alt=""></p>
 </blockquote>
-<h2 id="关于职业生涯与未来发展"><a href="#关于职业生涯与未来发展" class="headerlink" title="关于职业生涯与未来发展"></a>关于职业生涯与未来发展</h2><h2 id="关于家庭与生死"><a href="#关于家庭与生死" class="headerlink" title="关于家庭与生死"></a>关于家庭与生死</h2><p>数了数至今为止住校的时间已经超过了12年，从12岁到24岁之间我在学校的时间基本都是住宿舍的状态，宿舍生活几乎占掉了我目前为止一半的人生。这段不算短暂的人生中，有被当成不合群的nerd被孤立过，有遇到过像奕阳和旭东这样特别棒的室友、也有遇到过每天与室友作息不同毫无交流的情况。我还记得12岁刚开始住校生活时对独立生活的热切期待，12年后，对这种由学校随机选择的几个人住在同一屋檐下的制度，我的厌倦感却与日俱增。</p>
-<p>2019年4月跑到深圳实习，第一次自己租房，由于从小到大的海洋情怀选择了一间租金不贵环境又特别棒的海景房，唯一的缺点大概就是离公司距离比较远，每天上班需要舟车劳顿地公交换地铁花掉四五十分钟。室友人都很不错，每个周六我一般会放纵自己吃一顿汉堡王，然后去南山游泳馆游上4到5km，晚上回到家和室友一起看看粤语电影，偶尔玩下室友的Ukelili。广东是可以数着台风过夏天的省份，我的床又贴着一面大落地窗，台风过境于我是再好不过的白噪音，<del>因而度过了不少画船听雨眠的晚上，</del>总的来说度过了一段比较愉快的时光。</p>
+<h2 id="关于职业生涯与未来发展"><a href="#关于职业生涯与未来发展" class="headerlink" title="关于职业生涯与未来发展"></a>关于职业生涯与未来发展</h2><p>站在2020年一个预备役社畜的角度，我很难判断自己在职业生涯规划上到底是否选择了一条正确的道路。虽然我对外宣称自己在做选择时从不同的角度进行了理性的思考，但实际我是一个做事以兴趣为主要动力的人，更喜欢自我驱动而不是被他人驱动，如果被迫做自己完全不感兴趣的事情，效率就会显著降低，随之陷入痛苦且自我怀疑。我将“自己是否真的喜欢”当成了做选择时的第一考虑因素，因此才会在去年做出拒掉比当前package大得多的offer这种事情。</p>
+<p>随之而来有两条忧虑，其一是放弃phd自己是否会不甘心，其二是未来是否会后悔现在的工作选择。未来是否会后悔还未可知，只是现在年轻的我是肯定不会后悔的。</p>
+<hr>
+<p>刚读研时，老板问我是否有读博的意愿，我的答复是我希望用一篇论文的时间来观察自己是否适合科研，一年零八个月之后我的第一篇一作文章被AAAI-2019接收。这篇文章从idea shaping到初稿的撰写基本全部由我一人完成，Tom协助完成了后续theoretical proof与language proof的一些工作。现在来看那篇文章的表述存在不少细节上的问题，实验代码也被自己搞得一团糟以至于不敢开源，但AC和SPC依然愿意给我一个机会，让我占用最宝贵的oral session上讲讲文章的motivation。</p>
+<blockquote>
+<p>第一次在这么多人面前讲oral，老板给我的oral speech录了像，回头看的时候才发现那时候整个人紧张的要死，讲得磕磕绊绊，问题也回答得不知所云，明明私下poster交流的时候回答问题还可以的啊（#捂脸<br><img src="./diary-before-onboarding/aaai-1.jpg" alt=""><br><img src="./diary-before-onboarding/aaai-2.jpg" alt=""></p>
+</blockquote>
+<p>AAAI-2019让我见识了很多大佬，也和大佬们玩的很开心，很多大佬都劝我读phd，甚至曾经一度我也相信自己应该读phd，然而回国以后，客观受限于资源的有限以及现实的制约，主观源于自身的懒惰以及对风险的厌恶，去北美读phd的想法也慢慢随着时间沉淀下来了。后来在鹅厂实习的时间里，内心也经常怀疑自己想读phd的想法其实是很不纯粹的，搞不好只是在夏威夷玩耍几天后好了伤疤忘了疼。</p>
+<p>在深圳的实习时光一天天过去，我的课题研究工作做的稀烂，几无能拿的出手的成果，没有帮上Momo什么忙，也非常对不起同组做RL的Kirk和Anguo，老板却表扬我的工作说代码落地很快云云，我开始慢慢意识到，相比于做出优秀的科研成果，公司还是更需要螺丝钉，很多人不屑于螺丝钉的工作，但我在螺丝钉的路上还有很多要学习的东西，我距离成为一颗好的螺丝钉还很遥远，更何况，无论承认与否，每个人其实都是这个纷繁复杂的时代中的一颗小螺丝钉。</p>
+<hr>
+<p>之前被人问起选择我们组offer还是字节广告组offer，我作为利益相关，只能小心翼翼地给出一些我在鹅厂的感受作为参考。不谈package大小，对比之下，鹅厂在企业文化上优势显著（<em><span style="color: blue">btw一些人认为企业文化是虚无缥缈骗底层员工的东西，我的感受完全相反，多待几家公司就能感觉出企业文化是渗透到公司各层各部门的业务技术细节的</span></em>），“最受互联网人尊敬的公司”实非空喊口号；而字节最大的优势在于广告是一个足够general的领域，即使是中小型公司也有很大的需求，which means未来跳槽会更容易一些。</p>
+<p>天下熙熙皆为利来，天下攘攘皆为利往，为了未来的职业生涯发展，选择更容易跳槽的方向我觉得无可厚非。如果用完全理性的态度来看职业生涯规划，如果这家公司不是你打算待一辈子的公司，那么所有因素可以为跳槽便利程度让步。</p>
+<p>理智上，我可以接受大多数ML研究生甚至phd毕业后都变成了推荐算法工程师，但情感上，那么多寒窗二十年读了满腹paper的人，每天研究的问题就是如何让用户以更高的概率点击垃圾广告，抑或是如何让用户大量看卖肉小姐姐跳舞来杀时间，亦或是推送直播带货劝用户剁手，这难道不是一件非常赛博朋克的事情吗？</p>
+<p><img src="http://himg2.huanqiu.com/attachment2010/2012/0524/20120524023844106.jpg" alt=""></p>
+<p>在资本主义的世界里，每个人都是异化的资本，人的价值是由他所代表的资本的价值来得到体现的——这个道理两百年前马克思已经在《资本论》里写的很清楚。然而两百年过去了，人类历史上最大规模的共产主义社会实验随着苏联解体与东欧剧变宣告失败，英特那雄纳尔已然不在，每个人都被裹挟在资本主义的大潮中。对于这个时代中每个渺小的个体，如果说我们能做些什么来让自己变得更像一个人而不是资本的奴才，我想那就是听从自己内心的声音，活成自己最想成为的样子，去做自己真正认为有意义的事情，唯此而已。</p>
+<h2 id="关于家庭与社会责任"><a href="#关于家庭与社会责任" class="headerlink" title="关于家庭与社会责任"></a>关于家庭与社会责任</h2><p>数了数至今为止住校的时间已经超过了12年，从12岁到24岁之间我在学校的时间基本都是住宿舍的状态，宿舍生活几乎占掉了我目前为止一半的人生。这段不算短暂的人生中，有被当成不合群的nerd被孤立过，有遇到过像奕阳和旭东这样特别棒的室友、也有遇到过每天与室友作息不同毫无交流的情况。我还记得12岁刚开始住校生活时对独立生活的热切期待，12年后，对这种由学校随机选择的几个人住在同一屋檐下的制度，我的厌倦感却与日俱增。</p>
+<p>2019年4月跑到深圳实习，第一次自己租房，由于从小到大的海洋情怀选择了一间租金不贵环境又特别棒的海景房，唯一的缺点大概就是离公司距离比较远，每天上班需要舟车劳顿地公交换地铁花掉四五十分钟。室友人都很不错，每个周六我一般会放纵自己吃一顿汉堡王，然后去南山游泳馆游上4到5km，晚上回到家和室友一起看看粤语电影，偶尔玩下室友的Ukelili。广东是可以数着台风过夏天的省份，我的床又贴着一面大落地窗，台风过境于我是再好不过的白噪音，<del>因而度过了不少画船听雨眠的晚上，</del>总的来说是一段比较愉快的时光。</p>
 <blockquote>
 <p>当初看房最爱不过这个开放式的大阳台，这一侧向外看去是南山和月亮湾公园，另一侧外面是蛇口港的海。<br><img src="https://img1.doubanio.com/view/group_topic/l/public/p172809119.webp" alt=""></p>
 </blockquote>
+<p>从深圳回到上海后，逐渐开始感受到所谓寄托对于人精神的存在：在这座城市里，有人下班之后坐着公交地铁回到空无一人的家里，有人下班后回到家做饭弹琴看电视等待另一个即将回家的人，后者会比前者更加温暖，也会比前者更加让人身心俱疲。究其原因，人类无法脱离社会生活，而社会是一个高度non-Markovian且non-stationary的模型，有着近乎无穷多但测度为零的Nash equilibrium，因此绝对的互利共赢模式鲜少存在，人类在互相扶持的过程中势必会牺牲掉自己的一些自由与个人空间，换来只能由其他人为自己带来的温暖。</p>
+<p>这个社会模式其实和之前玩过的游戏【光遇】非常相似。在这个游戏中，玩家之间常规情况下是不能互相交流的，想要与其他玩家通过文字交流，就必须消耗自己的蜡烛点亮他人；刷图的过程中一些地图可见光源非常少，没有可见光源就不能通过点亮翅膀飞过一些障碍，这种情况下玩家之间互助可以更容易地通关；据传该游戏老版本最后一关暴风眼，组队的玩家必须牺牲掉其中一个玩家所有的翅膀才能过关。细细品来游戏制作者在这个游戏中蕴含的情感是非常温暖朴素的，游戏的每个机制实际上都是在鼓励玩家们成为那个“为他人点亮光芒”的人。</p>
+<blockquote>
+<p>这个游戏画面非常不错，音乐也非常治愈，我一般都是只顾看风景的佛系玩家，至今还没玩到最后一关<br><img src="./diary-before-onboarding/guangyu-1.jpg" alt=""><br><img src="./diary-before-onboarding/guangyu-2.jpg" alt=""></p>
+</blockquote>
+<p>还记得自己本科的时候看【逃避可耻但有用】，当时看这部剧基本上完全就是本着Gakki去的，然而剧中的情节让我非常难以接受。对于一个出身北方的直男大老爷们来说，无论是从哪个角度看，男主都不能被称作男人，这部剧难道表达的就是”啊啊即使如此废柴的男主只要有yasashi一个优点就可以把Gakki抱回家“吗？还有Gakki一个大学本科毕业生为什么会选择去做家政？为什么要选择”契约结婚“这种形式？这难道不是对自己人生的不负责吗？</p>
+<p><img src="https://bkimg.cdn.bcebos.com/pic/4e4a20a4462309f72772e41b7b0e0cf3d7cad69e" alt=""></p>
+<p>彼时我正值考研，内心还藏着火焰，网上言论以日本社会问题严重年轻人不思进取者众云云，似乎我们国家的年轻人总是积极上进乐观豁达。如今随着年龄与阅历的增长，我却越发能够在感情上理解日本那些所谓”不思进取“者的心情，个中滋味不足为外人道也。Gakki这部剧即使顶着”逃避可耻但有用“的题目，看似在鼓励逃避生活，实则结局中男主与Gakki都接受了彼此，编剧褒扬的还是”人类相互依靠一起生活偶尔逃避互相成为彼此精神的港湾“这样的生活理念，这让我开始觉得，东亚人民的精神世界其实大体上是类同的。</p>
 <h2 id="关于想去的地方"><a href="#关于想去的地方" class="headerlink" title="关于想去的地方"></a>关于想去的地方</h2>
       </div>
       
@@ -309,7 +338,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#关于近半年来的工作总结"><span class="nav-number">1.</span> <span class="nav-text">关于近半年来的工作总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于职业生涯与未来发展"><span class="nav-number">2.</span> <span class="nav-text">关于职业生涯与未来发展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于家庭与生死"><span class="nav-number">3.</span> <span class="nav-text">关于家庭与生死</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于想去的地方"><span class="nav-number">4.</span> <span class="nav-text">关于想去的地方</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#关于近半年来的工作总结"><span class="nav-number">1.</span> <span class="nav-text">关于近半年来的工作总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于职业生涯与未来发展"><span class="nav-number">2.</span> <span class="nav-text">关于职业生涯与未来发展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于家庭与社会责任"><span class="nav-number">3.</span> <span class="nav-text">关于家庭与社会责任</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于想去的地方"><span class="nav-number">4.</span> <span class="nav-text">关于想去的地方</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
