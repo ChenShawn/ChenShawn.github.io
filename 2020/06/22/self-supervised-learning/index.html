@@ -20,20 +20,27 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="The presentation note is used in AAAI-2019 oral presentation">
+  <meta name="description" content="最近self-supervised learning很火，大佬Kaiming He和Hinton组都有一些成果出来，Yann Lecun也对SSL报以很高的评价；2019年的时候我曾经觉得这个领域旧瓶装新酒没什么意思，但现在SSL的思路已经在包括CV、NLP、语音甚至是RL方面都作出了不错的实验效果，或许未来哪天可能会引发DL理念的革命，就像CV中self-attention超越了卷积，就像NLP">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Oral Presentation Notes">
-<meta property="og:url" content="http://yoursite.com/2019/01/18/oral-presentation-notes/index.html">
+<meta property="og:title" content="Self-supervised Learning Paper Collection">
+<meta property="og:url" content="http://yoursite.com/2020/06/22/self-supervised-learning/index.html">
 <meta property="og:site_name" content="Chen Shawn&#39;s Blogs">
-<meta property="og:description" content="The presentation note is used in AAAI-2019 oral presentation">
+<meta property="og:description" content="最近self-supervised learning很火，大佬Kaiming He和Hinton组都有一些成果出来，Yann Lecun也对SSL报以很高的评价；2019年的时候我曾经觉得这个领域旧瓶装新酒没什么意思，但现在SSL的思路已经在包括CV、NLP、语音甚至是RL方面都作出了不错的实验效果，或许未来哪天可能会引发DL理念的革命，就像CV中self-attention超越了卷积，就像NLP">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2019-01-18T00:29:45.000Z">
-<meta property="article:modified_time" content="2020-04-18T07:53:35.594Z">
+<meta property="og:image" content="https://ankeshanand.com/blog/assets/img/dollar-bill-drawing.png">
+<meta property="og:image" content="https://ankeshanand.com/blog/assets/img/dollar-bill-detailed.png">
+<meta property="og:image" content="https://ankeshanand.com/blog/assets/img/cpc.svg">
+<meta property="og:image" content="http://yoursite.com/2020/06/22/self-supervised-learning/membank.png">
+<meta property="og:image" content="https://ankeshanand.com/blog/assets/img/MoCo.png">
+<meta property="article:published_time" content="2020-06-22T08:37:32.000Z">
+<meta property="article:modified_time" content="2020-06-22T17:17:38.117Z">
 <meta property="article:author" content="Chen Shawn">
-<meta property="article:tag" content="Personal">
+<meta property="article:tag" content="Paper reading">
+<meta property="article:tag" content="Research">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ankeshanand.com/blog/assets/img/dollar-bill-drawing.png">
 
-<link rel="canonical" href="http://yoursite.com/2019/01/18/oral-presentation-notes/">
+<link rel="canonical" href="http://yoursite.com/2020/06/22/self-supervised-learning/">
 
 
 <script id="page-configurations">
@@ -46,7 +53,7 @@
   };
 </script>
 
-  <title>Oral Presentation Notes | Chen Shawn's Blogs</title>
+  <title>Self-supervised Learning Paper Collection | Chen Shawn's Blogs</title>
   
 
 
@@ -202,7 +209,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/18/oral-presentation-notes/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/22/self-supervised-learning/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -215,7 +222,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Oral Presentation Notes
+          Self-supervised Learning Paper Collection
         </h1>
 
         <div class="post-meta">
@@ -225,14 +232,14 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2019-01-18 08:29:45" itemprop="dateCreated datePublished" datetime="2019-01-18T08:29:45+08:00">2019-01-18</time>
+              <time title="Created: 2020-06-22 16:37:32" itemprop="dateCreated datePublished" datetime="2020-06-22T16:37:32+08:00">2020-06-22</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-04-18 15:53:35" itemprop="dateModified" datetime="2020-04-18T15:53:35+08:00">2020-04-18</time>
+                <time title="Modified: 2020-06-23 01:17:38" itemprop="dateModified" datetime="2020-06-23T01:17:38+08:00">2020-06-23</time>
               </span>
 
           
@@ -253,29 +260,52 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><strong>The presentation note is used in AAAI-2019 oral presentation</strong></p>
+        <p>最近self-supervised learning很火，大佬Kaiming He和Hinton组都有一些成果出来，Yann Lecun也对SSL报以很高的评价；2019年的时候我曾经觉得这个领域旧瓶装新酒没什么意思，但现在SSL的思路已经在包括CV、NLP、语音甚至是RL方面都作出了不错的实验效果，或许未来哪天可能会引发DL理念的革命，就像CV中self-attention超越了卷积，就像NLP中卷积加multi-head attention超越了RNN一样</p>
 <a id="more"></a>
-<p>Good morning/afternoon, everyone. It’s honored to be here to present our work “the adversarial attack and detection under the Fisher information metric”. My name is Zhao Chenxiao. It’s joint work with Prof. Fletcher, Yu Mixue, Prof Peng, Prof Zhang, and Prof Shen. </p>
-<p>So let’s start our topic with the notion of adversarial examples. A wide range of researches point out that deep learning models are vulnerable to the adversarial attack. Some specifically designed noise added on the input can be imperceptible for human, but make the models completely failed, and the phenomenon is quite general for various tasks.</p>
-<p>To better understand the adversarial examples, a fundamental problem is how to measure the vulnerability of the deep learning models. There are many ways to generate adversarial examples, but is there any way to describe the models’ robustness to these attacks under the same framework? One of the ideas is to use the worst case perturbations. If we can quantify it or optimize a surrogate of it, the robustness can be progressively improved by adversarial training. Another stream of study assumes that the distributions of the adversarial examples and normal samples are different. Using some characteristics that can describe the difference between them, this leads to the approach of adversarial detection.</p>
-<p><strong>Our approach combines both the adversarial attack and detection under the same framework.</strong> We assume that there exists a metric tensor in the output space, and the mapping of the neural network from the input space to the output space makes a pullback. That means we have a metric that can be used to characterize how the perturbation on the input will influence the output. Given an input sample, if we use \eta to denote the perturbation vector, the variation of the output in the tangent space will be given by this equation. As can be seen, they are related by both the Jacobian matrix and the metric tensor.</p>
-<p>So let’s skip the mathematical definitions first, say, if we already have a well-defined metric tensor $G^{x}$ in the data space, how do we formulate the objective function for adversarial perturbations? It is easy to figure out that the vulnerability can be defined by the quadratic form, where we constrain the norm of the perturbation on an epsilon sphere. The solution is also very simple: the optimal adversarial perturbation $\eta$ is the greatest eigenvector. So let’s get back to the question: <strong>how to define the metric tensor G?</strong></p>
-<p><strong>Intrinsically, why should the metric for the output predictions be non-linear?</strong> The basic idea is that, the model should be regarded as not only a function mapping, but also a probabilistic model. The set of all probability distributions conditioned on the model parameter is a manifold. So we don’t use Euclidean distance to measure to distance between distributions. </p>
-<p>Among all the distance measures, the metric defined by Fisher information has been proved to be the unique measure that is invariant to reparameterization. It is obviously positive semi-definite by definition. There are many other theoretical benefits. Please refer to this reference.</p>
-<p>For adversarial attacks, the input $x$ is the only changeable variable. We can obtain the following form of FIM using some exchange of variables. But more specifically, when compute the matrix numerically, what is $p(y|x)$ here? Basically we have two choices, the model distribution or empirical distribution. The model distribution can not be directly observed but really reflects some intrinsic features of the model, like uncertainty. The empirical distribution is just a multi-dimensional discrete distribution given by the last softmax layer. </p>
-<p>Using different definitions, here are some ways to compute the matrix. The vanilla approach is to use the explicit form of the Jacobian, and this would be computationally expensive. Another way is to compute the second derivative of the KL divergence. The adversarial training based on this theory is known as the virtual adversarial training.</p>
-<p>So our solution is to use the empirical distribution to compute the Fisher, which is the expectation over the outer product. This can give us many engineering benefits. First of all, it is easy to compute, providing one is already calculating the gradient. Another advantage is that this form make it a lot easier to calculate the matrix-vector-product without access to the explicit form of the matrix, and some eigen-decomposition methods, incuding power iteration and Lanczos method, only require matrix-vector-product to compute the eigenvalues and eigenvectors.</p>
-<p><strong>When the algorithm is applied on large datasets. We still have two problems.</strong> The first one is that if input sample X is high dimensional, the matrix G will be too big that one can not even load it into memory. As mentioned before, this can be solved using power iteration or Lanczos method. Both of them only need to matrix-vector-product instead of the explicit matrices. One thing to note is that the Lanczos algorithm can calculate a group of eigenvalues and the eigenvectors instead of just the maximum one, and it’s particularly fast for sparse matrices.</p>
-<p>Another problem is that for datasets like ImageNet, there are 1000 classes. In this case it will be hard to implement the expectation in parallel. Our solution is to use Monte-Carlo sampling from the empirical distribution $r$. </p>
-<p>We empirically find the output probabilities given by ImageNet models is long tail, so using only about 1/5 times of sampling is sufficient to guarantee the performance.</p>
-<p>Here are some comparisons of the attack using our algorithm, where we have compared our results with two gradient based methods. The horizontal axis is the fooling rate. The interesting part is that our method often gets higher fooling rate in one-step attack case. But if you use the algorithm iteratively the results get very similar to the results of the iterative variant of the fast gradient method.</p>
-<p>This figure shows the relationship between the vulnerability of the models and the eigenvalues. The vertical axis is the $\ell_{2}$ norm of the least perturbations, which is obtained via binary search along the direction of our attack. The horizontal axis is the logarithm of eigenvalues. As we can see the empirical evidence shows a linear relationship between them: The larger the eigenvalues are, the more vulnerable the model is in the corresponding subspaces.</p>
-<p>This suggests that we can use the eigenvalues as the vulnerability characteristic. This figure further shows the eigenvalues of adversarial examples and normal samples are distributed differently. In the left figure, we can see adding Gaussian noise on samples does not really change the eigenvalues of them, but the adversarial examples are more likely to have larger eigenvalues. In the right figure, we find that if we modify the samples along the direction of the perturbation, most of the eigenvalues of the samples are rapidly increasing with the increasing of the perturbation size.</p>
-<p>Based on the observation, we use an auxiliary classifier to distinguish the adversarial examples. For practical reasons we use the logarithm of eigenvalues as features. We use the aforementioned Lanczos method to get a group of eigenvalues instead of just the maximum one. Motivated by the previous literature, we also add noisy samples into the positive training set. This works very well on enhancing the generalization ability of the classifier.</p>
-<p>Some of our evaluations are shown here. We compare our method with the kernel density estimation and Bayesian uncertainty. We observe that our method achieves good performance on MNIST. </p>
-<p>The performance drops a little bit on CIFAR-10, but we can see the method still works nice when recognizing the three attacks on the right side.</p>
-<p>This form shows the generalization ability of our classifier trained using only one kind of attacks. As we can see here, our proposed method generalizes well on $\ell_{2}$ and $\ell_{\infty}$ norm attacks, but it fails to generalize to JSMA, which is an L0 norm case. As we know the $\ell_{0}$ norm space is discrete, making its topological structure a lot different with the other norms. From my personal point of view, it will be an interesting future work to extend the idea to a more general framework.</p>
-<p>That’s all. Thank you.</p>
+<h2 id="Representation-learning-with-contrastive-predictive-coding"><a href="#Representation-learning-with-contrastive-predictive-coding" class="headerlink" title="Representation learning with contrastive predictive coding"></a><a href="https://arxiv.org/abs/1807.03748" target="_blank" rel="noopener">Representation learning with contrastive predictive coding</a></h2><h3 id="1-1-Motivation"><a href="#1-1-Motivation" class="headerlink" title="1.1. Motivation"></a>1.1. Motivation</h3><p>这篇文章出自deepmind，算是contrastive-based SSL的开山之作，作者提出了一种新的无监督算法来学习数据的representation</p>
+<p>以前人们说要无监督学习数据的representation的时候一般会想到各种generative model，比如VAE或者GAN之类的，核心思路都是搞一个神经网络出来建模数据的distribution，训练后模型可以从原始数据分布中sample新样本</p>
+<p>这里就会遇到一个问题：<strong>如果我们的最终目的是学习一个好的representation的话，能够100%完美地建模原始数据是否是学习到一个good representation的必要条件？</strong>比如VAE要用MSE loss对原始图片数据做pixel level的回归，GAN则从理论上要求只有生成分布等于数据分布时模型才算收敛，从PGM的角度来讲，这些模型都要求100%无损地复原出原始数据分布，i.e.: 在conditional distribution $p(c|x)$中，latent variable $C$ 应当是 $X$ 的sufficient statistic</p>
+<p><a href="https://ankeshanand.com/blog/2020/01/26/contrative-self-supervised-learning.html" target="_blank" rel="noopener">这篇blog里</a>讲了一个很有趣的神经科学实验，人们日常生活中用得最多的纸币，大部分人未经训练很难画出纸币的各种细节，但这不影响人们看到假币时很容易从细节上判别真伪，这说明对人类来讲100%复原原始数据分布不是学习good representation的必要条件</p>
+<p><img src="https://ankeshanand.com/blog/assets/img/dollar-bill-drawing.png" alt=""><img src="https://ankeshanand.com/blog/assets/img/dollar-bill-detailed.png" alt=""></p>
+<h3 id="1-2-Proposed-approach"><a href="#1-2-Proposed-approach" class="headerlink" title="1.2. Proposed approach"></a>1.2. Proposed approach</h3><p>这篇文章中，作者的motivation是$C$不需要保留$X$的所有细节，我只是希望最大化$C$和$X$之间的mutual information，<strong>MI maximization</strong>应该是一个比较常规的Bayesian套路，定义是这样的</p>
+<script type="math/tex; mode=display">
+I(c,x)=\int_{\mathcal{X}}\int_{\mathcal{C}}p(x,c)\log{\frac{p(x,c)}{p(x)p(c)}}dcdx \\
+=\int_{\mathcal{X}}\int_{\mathcal{C}}p(x,c)\log{\frac{p(x|c)}{p(x)}}dcdx</script><p>这篇文章中研究的$X$是sequential的，工程上可以把每个time step的$x_{t}$过几个共享参数的fc，由此得到$z_{t}$，然后再让所有的$z_{t}$过一个RNN就得到了context vector $c_{t}$，如图</p>
+<p><img src="https://ankeshanand.com/blog/assets/img/cpc.svg" alt=""></p>
+<p>不需要考虑$p(c)$的prior，那么上式的$p(x,c)$直接从数据集中采样即可，问题就变成了如何最大化数学期望内部的log probability，作者建模了一个parametric function $f:\mathcal{X}\times\mathcal{C}\rightarrow{\mathbb{R^{+}}}$，形式为:</p>
+<script type="math/tex; mode=display">
+f_{k}(x_{t+k},c_{t})=\exp(c_{t}Wz_{t+k})</script><p>很显然$f$是大于0的，作者希望用函数$f_{k}(x_{t+k},c_{t})$来reparameterize $\frac{p(x_{t+k}|c_{t})}{p(x_{t+k})}$，当数据集中有一堆sequential的正样本，训练就可以直接用NCE中的negative sampling策略来采样负样本优化mutual information，NCE见<a href="https://chenshawn.github.io/2020/04/20/engineering-tricks-collection/#2-1-How-to-deal-with-large-vocabulary-size" target="_blank" rel="noopener">博客之前的文章: Collection of Engineering Tricks</a>，损失函数为</p>
+<script type="math/tex; mode=display">
+\mathcal{L}_{N}=-\mathbb{E}_{x\sim\mathcal{X}}[\log\frac{f_{k}(x_{t+k},c_{t})}{\sum_{x'\sim\mathcal{X}}f_{k}(x',c_{t})}]</script><p>作者同时还证明了</p>
+<script type="math/tex; mode=display">
+I(x_{t+k},c_{t})\geq\log(N)-\mathcal{L}_{N}</script><h3 id="1-3-Experimental-results"><a href="#1-3-Experimental-results" class="headerlink" title="1.3. Experimental results"></a>1.3. Experimental results</h3><p>这篇文章的实验部分也是比较solid，作者同时在speech recognition、CV、NLP、以及RL任务上都做了实验，speech的实验看不懂不做评价，简单总结能看懂的部分</p>
+<ul>
+<li>Audio classification放了一张tSNE降维后的图，各个类别区分非常清楚</li>
+<li>CV的实验是在ImageNet上做的，作者用101层的ResNet作为从$X$到$Z$的映射，然后把整个图像分成若干个patch，以patch为单位输入pixel CNN做从$Z$到$C$的映射，训练结束后把context vector $c_{t}$作为线性分类器的特征，发现线性分类器可以做到48.7%的top-1 ACC和73.6%的top-5 ACC</li>
+<li>RL的实验使用IMPALA做的，这篇文章里的RL实验设计被三言两语一笔带过，推测可能是用了IMPALA框架中的LSTM来做从$Z$到$C$的映射，然后把contrastive loss加到RL的loss上辅助训练，实验环境为DeepMind的几个比较简单的环境，作者给出了训练期的total reward曲线，效果提升显著，但是没有报告方差，也没有在多个random seed下的实验（传统艺能</li>
+</ul>
+<p>相比其他几组实验，RL算是比较特殊的，因为RL设定中$p(x)$和$p(c|x)$都是在动态变化的，因此contrastive能否在RL环境上work可以算是一个全新的问题了，你问我信不信contrastive这一套能在RL上work，我暂时持观望态度</p>
+<h2 id="Unsupervised-Feature-Learning-via-Non-Parametric-Instance-Discrimination"><a href="#Unsupervised-Feature-Learning-via-Non-Parametric-Instance-Discrimination" class="headerlink" title="Unsupervised Feature Learning via Non-Parametric Instance Discrimination"></a><a href="https://arxiv.org/pdf/1805.01978.pdf" target="_blank" rel="noopener">Unsupervised Feature Learning via Non-Parametric Instance Discrimination</a></h2><h3 id="2-1-Motivation"><a href="#2-1-Motivation" class="headerlink" title="2.1. Motivation"></a>2.1. Motivation</h3><ul>
+<li>作者认为contrastive learning可以看做是将每个样本看做一类，然后用NCE进行分类回归，从这个视角可以得到一些启发</li>
+<li>作者研究的任务限定在CV，于是把DeepMind文章里那个华而不实的pixel CNN去掉了</li>
+</ul>
+<p><img src="./membank.png" alt="模型结构"></p>
+<p><strong>Non-parametric classifier:</strong> 按照DeepMind文章的道理，我们最终的目标是学习一个好的representation $c_{t}$，然而$f_{k}(x_{t+k},c_{t})$居然是一个parametric function，作者认为如果$f_{k}$里面的参数太expressive的话就会影响$c_{t}$的可分性，于是就把$f_{k}$换成了一个non-parametric的形式：</p>
+<script type="math/tex; mode=display">
+f_{k}(c_t)=\exp(\frac{1}{\tau}c_{t}^{T}C)</script><p>其中$C$是所有样本的content vector $c_{t}$ concatenate起来的一个大matrix，$\tau$是温度系数</p>
+<p><strong>Memory bank:</strong> 作者认为既然 $c_t$ 的维度比 $x_t$ 低很多，那么把所有样本的 $c_t$ 都load到内存里是可取的，于是就搞出来一个叫做memory bank的东西用来存储所有的$c_{t}$，训练时每个epoch过样本的时候都依次更新membank里面的context vector，算loss时negative samples直接从memory bank中采样</p>
+<p><strong>Proximal regularization:</strong> 作者认为每个epoch中，每个样本”类别“只出现一次，训练会不稳定，于是在loss里加上了当前模型输出的context vector $c_t$ 与memory bank里对应存储的context vector $v_t$ 之间的MSE $||v_{t}-c_{t}||_{2}^{2}$</p>
+<blockquote>
+<p>技术细节：第一个epoch的时候membank里没东西怎么办？直接随机初始化</p>
+</blockquote>
+<h3 id="2-2-个人想法"><a href="#2-2-个人想法" class="headerlink" title="2.2. 个人想法"></a>2.2. 个人想法</h3><p>细想其motivation是有道理的，之前的研究工作一般都会把无监督学习到的representation丢给一个linear classifier，通过linear classifier的性能来体现representation的好坏，但整个contrastive learning的过程其实完全没有体现出representation的线性可分性质</p>
+<p>把所有的context vector都装在内存里这个idea在工业界是不可能实现的，感觉这个场景很适合上Redis</p>
+<p>Proximal regularization听起来也比较蠢，对于RL研究者而言，用ema动态更新memory bank应该是一个更容易想到的方案</p>
+<h2 id="Momentum-Contrast-for-Unsupervised-Visual-Representation-Learning"><a href="#Momentum-Contrast-for-Unsupervised-Visual-Representation-Learning" class="headerlink" title="Momentum Contrast for Unsupervised Visual Representation Learning"></a><a href="https://arxiv.org/pdf/1911.05722.pdf" target="_blank" rel="noopener">Momentum Contrast for Unsupervised Visual Representation Learning</a></h2><p>这篇出自Kaiming He，主要任务限定在visual representation learning</p>
+<h3 id="2-1-Motivation-1"><a href="#2-1-Motivation-1" class="headerlink" title="2.1. Motivation"></a>2.1. Motivation</h3><p>大佬是认为CV问题中constrastive learning的本质就是学习一个dynamic dictionary lookup</p>
+<blockquote>
+<p><img src="https://ankeshanand.com/blog/assets/img/MoCo.png" alt=""><br>这里注意一个细节，无论是memory bank还是MoCo，nagative samples的encoding过程都是不参与back-propagation的</p>
+</blockquote>
 
     </div>
 
@@ -291,7 +321,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>Post link: </strong>
-    <a href="http://yoursite.com/2019/01/18/oral-presentation-notes/" title="Oral Presentation Notes">http://yoursite.com/2019/01/18/oral-presentation-notes/</a>
+    <a href="http://yoursite.com/2020/06/22/self-supervised-learning/" title="Self-supervised Learning Paper Collection">http://yoursite.com/2020/06/22/self-supervised-learning/</a>
   </li>
   <li class="post-copyright-license">
     <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
@@ -302,7 +332,8 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Personal/" rel="tag"># Personal</a>
+              <a href="/tags/Paper-reading/" rel="tag"># Paper reading</a>
+              <a href="/tags/Research/" rel="tag"># Research</a>
           </div>
 
         
@@ -311,13 +342,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2019/01/11/cudnn-handle-initialization-failed/" rel="prev" title="CUDNN_STATUS_NOT_INITIALIZED">
-      <i class="fa fa-chevron-left"></i> CUDNN_STATUS_NOT_INITIALIZED
+    <a href="/2020/04/20/engineering-tricks-collection/" rel="prev" title="Collection of Engineering Tricks">
+      <i class="fa fa-chevron-left"></i> Collection of Engineering Tricks
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/01/18/git-summary/" rel="next" title="git使用记录">
-      git使用记录 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -376,6 +404,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Representation-learning-with-contrastive-predictive-coding"><span class="nav-number">1.</span> <span class="nav-text">Representation learning with contrastive predictive coding</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-Motivation"><span class="nav-number">1.1.</span> <span class="nav-text">1.1. Motivation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-Proposed-approach"><span class="nav-number">1.2.</span> <span class="nav-text">1.2. Proposed approach</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-Experimental-results"><span class="nav-number">1.3.</span> <span class="nav-text">1.3. Experimental results</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unsupervised-Feature-Learning-via-Non-Parametric-Instance-Discrimination"><span class="nav-number">2.</span> <span class="nav-text">Unsupervised Feature Learning via Non-Parametric Instance Discrimination</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Motivation"><span class="nav-number">2.1.</span> <span class="nav-text">2.1. Motivation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-个人想法"><span class="nav-number">2.2.</span> <span class="nav-text">2.2. 个人想法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Momentum-Contrast-for-Unsupervised-Visual-Representation-Learning"><span class="nav-number">3.</span> <span class="nav-text">Momentum Contrast for Unsupervised Visual Representation Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Motivation-1"><span class="nav-number">3.1.</span> <span class="nav-text">2.1. Motivation</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
